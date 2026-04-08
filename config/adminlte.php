@@ -187,6 +187,11 @@ return [
     |
     | Here you can change the look and behavior of the admin panel.
     |
+<<<<<<< HEAD
+=======
+    | For detailed instructions you can look the admin panel classes here:
+    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -209,6 +214,11 @@ return [
     |
     | Here we can modify the sidebar of the admin panel.
     |
+<<<<<<< HEAD
+=======
+    | For detailed instructions you can look the sidebar section here:
+    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -229,6 +239,11 @@ return [
     |
     | Here we can modify the right sidebar aka control sidebar of the admin panel.
     |
+<<<<<<< HEAD
+=======
+    | For detailed instructions you can look the right sidebar section here:
+    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -241,11 +256,22 @@ return [
     'right_sidebar_scrollbar_auto_hide' => 'l',
 
     /*
+<<<<<<< HEAD
     |
+=======
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |--------------------------------------------------------------------------
     | URLs
     |--------------------------------------------------------------------------
     |
+<<<<<<< HEAD
+=======
+    | Here we can modify the url settings of the admin panel.
+    |
+    | For detailed instructions you can look the urls section here:
+    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
+    |
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     */
 
     'use_route_url' => false,
@@ -269,6 +295,11 @@ return [
     | JavaScript. Typically, in your application's 'resources/js/app.js' file.
     | If you are not using any of these, leave it as 'false'.
     |
+<<<<<<< HEAD
+=======
+    | For detailed instructions you can look the asset bundling section here:
+    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -282,6 +313,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
+<<<<<<< HEAD
 'menu' => [
     
     // RRHH
@@ -380,6 +412,61 @@ return [
 
 ],
 
+=======
+    'menu' => [
+        [
+            'text' => 'Dashboard',
+            'url'  => '/',
+            'icon' => 'fas fa-home',
+        ],
+        [
+            'text' => 'Colaboradores',
+            'route' => 'colaboradores.index',
+            'icon' => 'fas fa-users',
+        ],
+        [
+            'text' => 'Áreas',
+            'route'  => 'areas.index',
+            'icon' => 'fas fa-building',
+        ],
+        [
+            'text' => 'Equipos',
+            'route' => 'equipos.index',
+            'icon' => 'fas fa-laptop',
+        ],
+        [
+            'text' => 'Cuentas',
+            'url'  => '#',
+            'icon' => 'fas fa-user-lock',
+        ],
+        [
+            'text' => 'Celulares',
+            'route'  => 'celulares.index',
+            'icon' => 'fas fa-mobile-alt',
+        ],
+        [
+            'text' => 'Bajas Colaboradores',
+            'route' => 'colaboradores.bajas',
+            'icon' => 'fas fa-user-slash',
+        ],
+        [
+            'text' => 'Ciudades',
+            'route'  => 'ciudades.index',
+            'icon' => 'fas fa-map-marker-alt',
+        ],
+        [
+            'text' => 'Asignaciones',
+            'route' => 'asignaciones.index',
+            'icon' => 'fas fa-clipboard-list',
+        ],
+        [
+            'text' => 'Asignaciones Celulares',
+            'route' => 'asignaciones-celulares.index',
+            'icon' => 'fas fa-mobile-alt',
+        ],
+    ],
+
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     /*
     |--------------------------------------------------------------------------
     | Menu Filters

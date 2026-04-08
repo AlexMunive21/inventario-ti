@@ -48,8 +48,11 @@ class Colaborador extends Model
     {   
         return $this->hasMany(Asignacion::class, 'colaborador_id');
     }
+<<<<<<< HEAD
     public function accounts()
     {
         return $this->hasMany(Account::class);
     }
+=======
+>>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
 }
