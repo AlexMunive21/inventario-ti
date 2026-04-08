@@ -10,11 +10,10 @@ use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CelularController;
 use App\Http\Controllers\AsignacionCelularController;
-<<<<<<< HEAD
+
 use App\Http\Controllers\AccountController;
 
-=======
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
+
 
 Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth'])
@@ -98,7 +97,7 @@ Route::get('/equipos/{equipo}/responsiva',
     [App\Http\Controllers\EquipoController::class,'responsiva'])
     ->name('equipos.responsiva');
 
-<<<<<<< HEAD
+
 
 Route::resource('cuentas', AccountController::class);
 
@@ -130,6 +129,5 @@ Route::get('/dashboard', function () {
 })->middleware(['auth','permission:ver dashboard'])->name('dashboard');
 
 
-=======
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
+
 require __DIR__.'/auth.php';
