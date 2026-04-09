@@ -10,7 +10,8 @@ class AreaController extends Controller
 
     public function index()
     {
-        $areas = Area::all();
+        $areas = Area::where('activo', 1)->get();
+
         return view('areas.index', compact('areas'));
     }
 

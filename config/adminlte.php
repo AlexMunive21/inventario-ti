@@ -187,12 +187,6 @@ return [
     |
     | Here you can change the look and behavior of the admin panel.
     |
-<<<<<<< HEAD
-=======
-    | For detailed instructions you can look the admin panel classes here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
-    |
     */
 
     'classes_body' => '',
@@ -214,11 +208,6 @@ return [
     |
     | Here we can modify the sidebar of the admin panel.
     |
-<<<<<<< HEAD
-=======
-    | For detailed instructions you can look the sidebar section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -239,11 +228,6 @@ return [
     |
     | Here we can modify the right sidebar aka control sidebar of the admin panel.
     |
-<<<<<<< HEAD
-=======
-    | For detailed instructions you can look the right sidebar section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Layout-and-Styling-Configuration
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -256,22 +240,10 @@ return [
     'right_sidebar_scrollbar_auto_hide' => 'l',
 
     /*
-<<<<<<< HEAD
-    |
-=======
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |--------------------------------------------------------------------------
     | URLs
     |--------------------------------------------------------------------------
     |
-<<<<<<< HEAD
-=======
-    | Here we can modify the url settings of the admin panel.
-    |
-    | For detailed instructions you can look the urls section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
-    |
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     */
 
     'use_route_url' => false,
@@ -295,11 +267,6 @@ return [
     | JavaScript. Typically, in your application's 'resources/js/app.js' file.
     | If you are not using any of these, leave it as 'false'.
     |
-<<<<<<< HEAD
-=======
-    | For detailed instructions you can look the asset bundling section here:
-    | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
     |
     */
 
@@ -313,7 +280,6 @@ return [
     |--------------------------------------------------------------------------
     */
 
-<<<<<<< HEAD
 'menu' => [
     
     // RRHH
@@ -412,7 +378,7 @@ return [
 
 ],
 
-=======
+
     'menu' => [
         [
             'text' => 'Dashboard',
@@ -466,7 +432,7 @@ return [
         ],
     ],
 
->>>>>>> d324bb13c5e15c35d2292348c2e26b6cdf7a4249
+
     /*
     |--------------------------------------------------------------------------
     | Menu Filters

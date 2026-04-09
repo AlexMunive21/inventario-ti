@@ -98,12 +98,19 @@ class ColaboradorController extends Controller implements HasMiddleware
 
     public function destroy(Colaborador $colaborador)
     {
-        $colaborador->update([
-            'activo' => 2
-        ]);
+        // NUEVO — mismas validaciones que baja()
+        if ($colaborador->asignacionesCelulares()->whereNull('fecha_devolucion')->exists()) {
+            return back()->with('error', 'El colaborador tiene un celular asignado. Debe liberarlo primero.');
+        }
+
+        if ($colaborador->asignacionesEquipos()->where('activa', 1)->exists()) {
+            return back()->with('error', 'El colaborador tiene un equipo asignado. Debe liberarlo primero.');
+        }
+
+        $colaborador->update(['activo' => 2]);
 
         return redirect()->route('colaboradores.index')
-            ->with('success','Colaborador dado de baja correctamente');
+            ->with('success', 'Colaborador dado de baja correctamente');
     }
 
     public function show(Colaborador $colaborador)
@@ -157,17 +164,19 @@ class ColaboradorController extends Controller implements HasMiddleware
 
     $colaborador = Colaborador::findOrFail($id);
 
-    $equipo = Asignacion::where('colaborador_id',$id)
-                ->whereNull('fecha_devolucion')
-                ->with('equipo')
-                ->first();
+    // Criterio unificado: igual que AsignacionController
+    $equipo = Asignacion::where('colaborador_id', $id)
+        ->where('activa', 1)
+        ->with('equipo')
+        ->first();
 
-    $celular = AsignacionCelular::where('colaborador_id',$id)
-                ->whereNull('fecha_devolucion')
-                ->with('celular')
-                ->first();
+    // Criterio unificado: igual que AsignacionCelularController
+    $celular = AsignacionCelular::where('colaborador_id', $id)
+        ->whereNull('fecha_devolucion')
+        ->with('celular')
+        ->first();
 
-    return view('colaboradores.ficha_rrhh',compact(
+    return view('colaboradores.ficha_rrhh', compact(
         'colaborador',
         'equipo',
         'celular'

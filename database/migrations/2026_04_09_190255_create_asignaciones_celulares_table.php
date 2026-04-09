@@ -13,14 +13,6 @@ return new class extends Migration
     {
         Schema::create('asignaciones_celulares', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('celular_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            $table->date('fecha_asignacion');
-            $table->date('fecha_liberacion')->nullable();
-
-            $table->text('observaciones')->nullable();
-
             $table->timestamps();
         });
     }
@@ -30,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asignacion_celulars');
+        Schema::dropIfExists('asignaciones_celulares');
     }
 };

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Colaborador;
 use App\Models\Account;
+use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -32,7 +33,7 @@ class AccountController extends Controller
         Account::create([
             'name' => $request->name,
             'username' => $request->username,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'type' => $request->type,
             'colaborador_id' => $request->colaborador_id,
             'is_ti' => $request->colaborador_id ? false : true,

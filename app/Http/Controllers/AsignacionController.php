@@ -6,6 +6,7 @@ use App\Models\Asignacion;
 use App\Models\Equipo;
 use App\Models\Colaborador;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AsignacionController extends Controller
 {
@@ -35,22 +36,28 @@ class AsignacionController extends Controller
             'fecha_asignacion' => 'required|date',
         ]);
 
-        // Crear asignación
-        Asignacion::create([
-            'equipo_id' => $request->equipo_id,
-            'colaborador_id' => $request->colaborador_id,
-            'fecha_asignacion' => $request->fecha_asignacion,
-            'observaciones' => $request->observaciones,
-            'activa' => 1
-        ]);
+        // NUEVO — transacción con bloqueo pesimista
+        DB::transaction(function () use ($request) {
+            $equipo = Equipo::lockForUpdate()->findOrFail($request->equipo_id);
 
-        // Cambiar estado del equipo
-        $equipo = Equipo::find($request->equipo_id);
-        $equipo->estatus = 'asignado';
-        $equipo->save();
+            if ($equipo->estatus !== 'disponible') {
+                throw new \Exception('El equipo ya no está disponible.');
+            }
+
+            Asignacion::create([
+                'equipo_id' => $request->equipo_id,
+                'colaborador_id' => $request->colaborador_id,
+                'fecha_asignacion' => $request->fecha_asignacion,
+                'observaciones' => $request->observaciones,
+                'activa' => 1
+            ]);
+
+            $equipo->estatus = 'asignado';
+            $equipo->save();
+        });
 
         return redirect()->route('asignaciones.index')
-            ->with('success','Equipo asignado correctamente');
+            ->with('success', 'Equipo asignado correctamente');
     }
 
     public function destroy($id)

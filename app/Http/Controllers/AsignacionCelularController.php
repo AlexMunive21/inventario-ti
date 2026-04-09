@@ -41,6 +41,15 @@ class AsignacionCelularController extends Controller
             return redirect()->back()->with('error', 'El celular no está disponible.');
         }
 
+        // NUEVO — evita doble asignación
+        $yaAsignado = AsignacionCelular::where('colaborador_id', $request->colaborador_id)
+            ->whereNull('fecha_devolucion')
+            ->exists();
+
+        if ($yaAsignado) {
+            return redirect()->back()->with('error', 'Este colaborador ya tiene un celular asignado.');
+        }
+
         AsignacionCelular::create([
             'celular_id' => $request->celular_id,
             'colaborador_id' => $request->colaborador_id,
@@ -48,10 +57,7 @@ class AsignacionCelularController extends Controller
             'observaciones' => $request->observaciones,
         ]);
 
-        // Cambiar estatus del celular
-        $celular->update([
-            'estatus' => 'asignado'
-        ]);
+        $celular->update(['estatus' => 'asignado']);
 
         return redirect()->route('asignaciones-celulares.index')
             ->with('success', 'Celular asignado correctamente.');

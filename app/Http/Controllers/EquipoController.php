@@ -101,11 +101,9 @@ class EquipoController extends Controller
             return view('equipos.show', compact('equipo'));
         }
 
-        public function responsiva($id)
+        public function responsiva(Equipo $equipo)
     {
         Carbon::setLocale('es');
-
-        $equipo = \App\Models\Equipo::findOrFail($id);
 
         $asignacion = $equipo->asignaciones()
             ->where('activa',1)
