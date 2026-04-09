@@ -98,7 +98,6 @@ class ColaboradorController extends Controller implements HasMiddleware
 
     public function destroy(Colaborador $colaborador)
     {
-        // NUEVO — mismas validaciones que baja()
         if ($colaborador->asignacionesCelulares()->whereNull('fecha_devolucion')->exists()) {
             return back()->with('error', 'El colaborador tiene un celular asignado. Debe liberarlo primero.');
         }
@@ -107,10 +106,13 @@ class ColaboradorController extends Controller implements HasMiddleware
             return back()->with('error', 'El colaborador tiene un equipo asignado. Debe liberarlo primero.');
         }
 
-        $colaborador->update(['activo' => 2]);
+        $colaborador->update([
+            'activo'     => 2,
+            'fecha_baja' => now(),
+        ]);
 
         return redirect()->route('colaboradores.index')
-            ->with('success', 'Colaborador dado de baja correctamente');
+            ->with('success', 'Colaborador dado de baja correctamente.');
     }
 
     public function show(Colaborador $colaborador)
@@ -126,27 +128,43 @@ class ColaboradorController extends Controller implements HasMiddleware
     }
     public function baja(Colaborador $colaborador)
     {
-        // Verificar celulares asignados
-        if ($colaborador->asignacionesCelulares()->exists()) {
-            return back()->with('error','El colaborador tiene un celular asignado. Debe liberarlo primero.');
+        if ($colaborador->asignacionesCelulares()->whereNull('fecha_devolucion')->exists()) {
+            return back()->with('error', 'El colaborador tiene un celular asignado. Debe liberarlo primero.');
         }
 
-        // Verificar equipos asignados
-        if ($colaborador->asignacionesEquipos()->exists()) {
-            return back()->with('error','El colaborador tiene un equipo asignado. Debe liberarlo primero.');
+        if ($colaborador->asignacionesEquipos()->where('activa', 1)->exists()) {
+            return back()->with('error', 'El colaborador tiene un equipo asignado. Debe liberarlo primero.');
         }
 
-        // Baja lógica
         $colaborador->update([
-            'activo' => 2
+            'activo'     => 2,
+            'fecha_baja' => now(),
         ]);
 
         return redirect()->route('colaboradores.index')
-            ->with('success','Colaborador dado de baja correctamente.');
+            ->with('success', 'Colaborador dado de baja correctamente.');
     }
     public function bajas()
     {
-        $colaboradores = Colaborador::where('activo',2)->get();
+        $colaboradores = Colaborador::with(['area', 'ciudad'])
+            ->where('activo', 2)
+            ->orderBy('fecha_baja', 'desc')
+            ->get()
+            ->map(function ($col) {
+                // Último equipo que tuvo
+                $col->ultimo_equipo = Asignacion::where('colaborador_id', $col->id)
+                    ->with('equipo')
+                    ->latest()
+                    ->first();
+
+                // Último celular que tuvo
+                $col->ultimo_celular = AsignacionCelular::where('colaborador_id', $col->id)
+                    ->with('celular')
+                    ->latest()
+                    ->first();
+
+                return $col;
+            });
 
         return view('colaboradores.bajas', compact('colaboradores'));
     }

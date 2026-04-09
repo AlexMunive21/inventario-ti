@@ -21,7 +21,8 @@ class Colaborador extends Model
         'telefono',
         'area_id',
         'ciudad_id',
-        'activo'
+        'activo',
+        'fecha_baja'
     ];
 
     public function area()

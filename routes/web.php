@@ -13,9 +13,7 @@ use App\Http\Controllers\AsignacionCelularController;
 use App\Http\Controllers\AccountController;
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
-Route::get('/', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'permission:ver dashboard'])
-    ->name('dashboard');
+
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:ver dashboard']);
