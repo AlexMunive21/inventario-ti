@@ -51,7 +51,7 @@ public function edit($id)
     return view('usuarios.edit', compact('usuario','roles'));
 }
 
-public function update(  $request, $id)
+public function update(\Illuminate\Http\Request $request, $id)
 {
     $usuario = User::findOrFail($id);
 
@@ -76,5 +76,20 @@ public function update(  $request, $id)
 
     return redirect()->route('usuarios.index')
         ->with('success','Usuario actualizado');
+}
+public function destroy($id)
+{
+    $usuario = User::findOrFail($id);
+
+    // Evitar que se borre a sí mismo
+    if ($usuario->id === auth()->id()) {
+        return redirect()->route('usuarios.index')
+            ->with('error', 'No puedes eliminarte a ti mismo.');
+    }
+
+    $usuario->delete();
+
+    return redirect()->route('usuarios.index')
+        ->with('success', 'Usuario eliminado correctamente.');
 }
 }

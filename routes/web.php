@@ -14,9 +14,12 @@ use App\Http\Controllers\AccountController;
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
 
-
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified', 'permission:ver dashboard']);
+    ->middleware(['auth', 'permission:ver dashboard'])
+    ->name('dashboard');
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'permission:ver dashboard']);
 
 // Perfil
 Route::middleware('auth')->group(function () {

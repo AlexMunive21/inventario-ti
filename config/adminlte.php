@@ -343,7 +343,7 @@ return [
 
     [
         'text' => 'Bajas Colaboradores',
-        'route' => 'colaboradores.bajas',
+        'route' => 'bajas.index',
         'icon' => 'fas fa-user-slash',
         'can' => 'ver todo',
     ],
@@ -429,6 +429,11 @@ return [
             'text' => 'Asignaciones Celulares',
             'route' => 'asignaciones-celulares.index',
             'icon' => 'fas fa-mobile-alt',
+        ],
+        [
+            'text' => 'Usuarios',
+            'route' => 'usuarios.index',
+            'icon' => 'fas fa-users-cog',
         ],
     ],
 

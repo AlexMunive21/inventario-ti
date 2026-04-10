@@ -22,6 +22,14 @@
         <input type="text" name="descripcion" class="form-control" value="{{ $area->descripcion }}">
     </div>
 
+    <div class="form-group">
+        <label>Activo</label>
+        <select name="activo" class="form-control">
+            <option value="1" {{ $area->activo ? 'selected' : '' }}>Sí</option>
+            <option value="0" {{ !$area->activo ? 'selected' : '' }}>No</option>
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-success mt-2">Actualizar</button>
     <a href="{{ route('areas.index') }}" class="btn btn-secondary mt-2">Cancelar</a>
 </form>
