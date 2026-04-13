@@ -39,7 +39,7 @@
 
 {{-- ================= EQUIPOS ================= --}}
 <div class="card">
-    <div class="card-header bg-secondary text-white">
+    <div class="card-header bg-info text-white">
         Historial de Equipos
     </div>
     <div class="card-body">
@@ -83,6 +83,54 @@
 
     </div>
 </div>
+
+<br>
+
+{{-- ================= TABLETS ================= --}}
+<div class="card">
+    <div class="card-header bg-info text-white">
+        Historial de Tablets
+    </div>
+    <div class="card-body">
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Tablet</th>
+                    <th>Fecha Asignación</th>
+                    <th>Fecha Devolución</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($colaborador->asignacionesTablets as $asignacion)
+                <tr>
+                    <td>
+                        {{ $asignacion->tablet->marca ?? '' }} 
+                        - 
+                        {{ $asignacion->tablet->modelo ?? '' }}
+                    </td>
+
+                    <td>{{ $asignacion->fecha_asignacion }}</td>
+
+                    <td>
+                        @if($asignacion->fecha_devolucion)
+                            {{ $asignacion->fecha_devolucion }}
+                        @else
+                            <span class="badge bg-warning">Activo</span>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="3" class="text-center text-muted">
+                        No tiene tablets asignadas
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+    </div>
 
 <br>
 

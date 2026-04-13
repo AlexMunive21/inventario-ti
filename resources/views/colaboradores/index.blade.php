@@ -49,6 +49,22 @@
                     <i class="fas fa-id-card"></i>
                 </a>
 
+                <a href="{{ route('colaboradores.ficha_rrhh',$col) }}" 
+                class="btn btn-sm btn-success" 
+                title="Ver Ficha RRHH">
+                    <i class="fas fa-users-cog"></i>
+                </a>
+
+                @role('rh')
+                {{-- Ver Ficha --}}
+                <a href="{{ route('colaboradores.ficha',$col) }}"
+                class="btn btn-sm btn-info"
+                title="Ver ficha">
+                    <i class="fas fa-id-card"></i>
+                </a>
+                @endrole
+
+
                 @role('GerenteTIDS|AnalistaTI')
                 {{-- Editar --}}
                 <a href="{{ route('colaboradores.edit',$col) }}"

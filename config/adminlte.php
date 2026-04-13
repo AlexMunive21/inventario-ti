@@ -297,7 +297,14 @@ return [
         'can' => 'ver colaboradores',
     ],
 
-    // TI
+    [
+        'text' => 'Ficha Colaboradores',
+        'route' => 'fichas.index',
+        'icon' => 'fas fa-id-card',
+        'can' => 'ver fichas',
+    ],
+
+    // TI   
 
     [
         'text' => 'Dashboard',
@@ -310,6 +317,13 @@ return [
         'text' => 'Colaboradores',
         'route' => 'colaboradores.index',
         'icon' => 'fas fa-users',
+        'can' => 'ver todo',
+    ],
+
+    [
+        'text' => 'Ficha Colaboradores',
+        'route' => 'fichas.index',
+        'icon' => 'fas fa-id-card',
         'can' => 'ver todo',
     ],
 
@@ -390,6 +404,13 @@ return [
             'route' => 'colaboradores.index',
             'icon' => 'fas fa-users',
         ],
+
+        [
+            'text' => 'Ficha Colaboradores',
+            'route' => 'ficha_rrhh.index',
+            'icon' => 'fas fa-id-card',
+        ],
+        
         [
             'text' => 'Áreas',
             'route'  => 'areas.index',

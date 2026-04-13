@@ -8,21 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('asignaciones_celulares', function (Blueprint $table) {
-            $table->foreignId('celular_id')->constrained()->onDelete('cascade');
+        Schema::create('asignaciones_tablets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tablet_id')->constrained()->onDelete('cascade');
             $table->foreignId('colaborador_id')->constrained()->onDelete('cascade');
             $table->date('fecha_asignacion');
             $table->date('fecha_devolucion')->nullable();
             $table->text('observaciones')->nullable();
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::table('asignaciones_celulares', function (Blueprint $table) {
-            $table->dropForeign(['celular_id']);
-            $table->dropForeign(['colaborador_id']);
-            $table->dropColumn(['celular_id', 'colaborador_id', 'fecha_asignacion', 'fecha_devolucion', 'observaciones']);
-        });
+        Schema::dropIfExists('asignaciones_tablets');
     }
 };

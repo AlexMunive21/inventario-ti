@@ -54,5 +54,9 @@ class Colaborador extends Model
     {
         return $this->hasMany(Account::class);
     }
+    public function asignacionesTablets()
+    {
+        return $this->hasMany(AsignacionTablet::class, 'colaborador_id');
+    }
 
 }

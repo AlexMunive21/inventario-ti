@@ -11,6 +11,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CelularController;
 use App\Http\Controllers\AsignacionCelularController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\TabletController;
+use App\Http\Controllers\AsignacionTabletController;
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
 
@@ -36,6 +38,17 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     Route::resource('asignaciones', AsignacionController::class);
     Route::resource('asignaciones-celulares', AsignacionCelularController::class);
     Route::resource('cuentas', AccountController::class);
+    Route::resource('usuarios', App\Http\Controllers\UsuarioController::class);
+
+    Route::resource('tablets', TabletController::class)
+    ->except(['destroy']);
+    Route::delete('tablets/{tablet}', [TabletController::class, 'destroy'])
+        ->middleware('role:GerenteTIDS')
+        ->name('tablets.destroy');
+
+    Route::resource('asignaciones-tablets', AsignacionTabletController::class);
+    Route::put('asignaciones-tablets/{id}/devolver', [AsignacionTabletController::class, 'devolver'])
+        ->name('asignaciones-tablets.devolver');
 
     // Rutas extra de asignaciones
     Route::get('asignaciones-historial', [AsignacionController::class, 'historial'])
@@ -64,20 +77,28 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
 
 // Colaboradores — permiso propio
 Route::middleware(['auth', 'permission:ver colaboradores'])->group(function () {
-    Route::resource('colaboradores', ColaboradorController::class)
-        ->parameters(['colaboradores' => 'colaborador']);
 
+    // Primero las rutas específicas
     Route::get('colaboradores/bajas', [ColaboradorController::class, 'bajas'])
         ->name('colaboradores.bajas')
         ->middleware('role:GerenteTIDS');
+
     Route::put('colaboradores/{colaborador}/baja', [ColaboradorController::class, 'baja'])
         ->name('colaboradores.baja')
         ->middleware('role:GerenteTIDS');
+
     Route::put('colaboradores/{colaborador}/reactivar', [ColaboradorController::class, 'reactivar'])
         ->name('colaboradores.reactivar')
         ->middleware('role:GerenteTIDS');
-});
 
+    // Después el resource
+    Route::resource('colaboradores', ColaboradorController::class)
+        ->parameters(['colaboradores' => 'colaborador']);
+});
 Route::resource('usuarios', App\Http\Controllers\UsuarioController::class);
+
+Route::get('colaboradores/{colaborador}/ficha-rrhh',
+    [ColaboradorController::class, 'fichaRRHH']
+)->name('colaboradores.ficha_rrhh');
 
 require __DIR__.'/auth.php';
