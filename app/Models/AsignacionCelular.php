@@ -14,6 +14,8 @@ class AsignacionCelular extends Model
         'fecha_asignacion',
         'fecha_devolucion',
         'observaciones',
+        'observaciones_devolucion',
+        'activa'
     ];
 
     // Relación con celular

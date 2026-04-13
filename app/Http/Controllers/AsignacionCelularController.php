@@ -63,19 +63,26 @@ class AsignacionCelularController extends Controller
             ->with('success', 'Celular asignado correctamente.');
     }
 
-    public function devolver($id)
+    public function devolver(Request $request, $id)
     {
         $asignacion = AsignacionCelular::findOrFail($id);
 
         $asignacion->update([
-            'fecha_devolucion' => now()
+            'fecha_devolucion'         => now(),
+            'observaciones_devolucion' => $request->observaciones_devolucion, // ✅
         ]);
 
-        $asignacion->celular->update([
-            'estatus' => 'disponible'
-        ]);
+        $asignacion->celular->update(['estatus' => 'disponible']);
 
         return redirect()->back()
             ->with('success', 'Celular devuelto correctamente.');
+    }
+    public function historial()
+    {
+        $asignaciones = AsignacionCelular::with(['celular', 'colaborador'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('asignaciones_celulares.historial', compact('asignaciones'));
     }
 }

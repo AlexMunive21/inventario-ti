@@ -13,7 +13,9 @@ class AsignacionTablet extends Model
         'colaborador_id',
         'fecha_asignacion',
         'fecha_devolucion',
-        'observaciones'
+        'observaciones',
+        'observaciones_devolucion',
+        'activa'
     ];
 
     public function tablet()

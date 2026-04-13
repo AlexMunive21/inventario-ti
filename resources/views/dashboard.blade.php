@@ -8,6 +8,8 @@
 
 @section('content')
 
+{{-- Tarjetas de Equipos — solo TI y Gerente --}}
+@role('AnalistaTI|GerenteTIDS')
 <div class="row">
 
     <div class="col-lg-3 col-6">
@@ -59,7 +61,9 @@
     </div>
 
 </div>
+@endrole
 
+{{-- Colaboradores — todos los roles --}}
 <div class="row">
 
     <div class="col-lg-3 col-6">
@@ -74,7 +78,20 @@
         </div>
     </div>
 
-    
+    {{-- Bajas — solo RH y Gerente --}}
+    @role('rh|GerenteTIDS')
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ $bajas }}</h3>
+                <p>Bajas de Colaboradores</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-slash"></i>
+            </div>
+        </div>
+    </div>
+    @endrole
 
 </div>
 

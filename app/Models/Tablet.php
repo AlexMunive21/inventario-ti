@@ -33,4 +33,8 @@ class Tablet extends Model
     {
         return $this->hasMany(AsignacionTablet::class);
     }
+    public function reactivaciones()
+    {
+        return $this->hasMany(ReactivacionTablet::class);
+    }
 }

@@ -19,6 +19,7 @@
 <th>Fecha Asignación</th>
 <th>Fecha Devolución</th>
 <th>Estatus</th>
+<th>Observaciones Devolucion</th>
 </tr>
 </thead>
 
@@ -49,6 +50,8 @@
 <span class="badge bg-secondary">Liberada</span>
 @endif
 </td>
+
+<td>{{ $asig->observaciones_devolucion }}</td>
 
 </tr>
 

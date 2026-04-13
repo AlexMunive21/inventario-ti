@@ -39,5 +39,9 @@ class Equipo extends Model
     {
         return $this->hasMany(Asignacion::class);
     }
+    public function reactivaciones()
+    {
+        return $this->hasMany(ReactivacionEquipo::class);
+    }
     
 }

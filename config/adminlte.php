@@ -297,13 +297,6 @@ return [
         'can' => 'ver colaboradores',
     ],
 
-    [
-        'text' => 'Ficha Colaboradores',
-        'route' => 'fichas.index',
-        'icon' => 'fas fa-id-card',
-        'can' => 'ver fichas',
-    ],
-
     // TI   
 
     [
@@ -317,13 +310,6 @@ return [
         'text' => 'Colaboradores',
         'route' => 'colaboradores.index',
         'icon' => 'fas fa-users',
-        'can' => 'ver todo',
-    ],
-
-    [
-        'text' => 'Ficha Colaboradores',
-        'route' => 'fichas.index',
-        'icon' => 'fas fa-id-card',
         'can' => 'ver todo',
     ],
 
@@ -356,6 +342,13 @@ return [
     ],
 
     [
+        'text' => 'Tablets',
+        'route'  => 'tablets.index',
+        'icon' => 'fas fa-tablet-alt',
+        'can' => 'ver todo',
+    ],
+
+    [
         'text' => 'Bajas Colaboradores',
         'route' => 'bajas.index',
         'icon' => 'fas fa-user-slash',
@@ -384,6 +377,13 @@ return [
     ],
 
     [
+        'text' => 'Asignaciones Tablets',
+        'route' => 'asignaciones-tablets.index',
+        'icon' => 'fas fa-tablet-alt',
+        'can' => 'ver todo',
+    ],
+
+    [
         'text' => 'Usuarios',
         'route' => 'usuarios.index',
         'icon' => 'fas fa-users-cog',
@@ -393,71 +393,156 @@ return [
 ],
 
 
-    'menu' => [
-        [
-            'text' => 'Dashboard',
-            'url'  => '/',
-            'icon' => 'fas fa-home',
-        ],
-        [
-            'text' => 'Colaboradores',
-            'route' => 'colaboradores.index',
-            'icon' => 'fas fa-users',
-        ],
+'menu' => [
+    [
+        'text' => 'Dashboard',
+        'url'  => '/',
+        'icon' => 'fas fa-tachometer-alt',
+        'icon_color' => 'blue',
+    ],
 
-        [
-            'text' => 'Ficha Colaboradores',
-            'route' => 'ficha_rrhh.index',
-            'icon' => 'fas fa-id-card',
-        ],
-        
-        [
-            'text' => 'Áreas',
-            'route'  => 'areas.index',
-            'icon' => 'fas fa-building',
-        ],
-        [
-            'text' => 'Equipos',
-            'route' => 'equipos.index',
-            'icon' => 'fas fa-laptop',
-        ],
-        [
-            'text' => 'Cuentas',
-            'url'  => '#',
-            'icon' => 'fas fa-user-lock',
-        ],
-        [
-            'text' => 'Celulares',
-            'route'  => 'celulares.index',
-            'icon' => 'fas fa-mobile-alt',
-        ],
-        [
-            'text' => 'Bajas Colaboradores',
-            'route' => 'colaboradores.bajas',
-            'icon' => 'fas fa-user-slash',
-        ],
-        [
-            'text' => 'Ciudades',
-            'route'  => 'ciudades.index',
-            'icon' => 'fas fa-map-marker-alt',
-        ],
-        [
-            'text' => 'Asignaciones',
-            'route' => 'asignaciones.index',
-            'icon' => 'fas fa-clipboard-list',
-        ],
-        [
-            'text' => 'Asignaciones Celulares',
-            'route' => 'asignaciones-celulares.index',
-            'icon' => 'fas fa-mobile-alt',
-        ],
-        [
-            'text' => 'Usuarios',
-            'route' => 'usuarios.index',
-            'icon' => 'fas fa-users-cog',
+    ['header' => 'PERSONAL'],
+
+    [
+        'text'    => 'Colaboradores',
+        'icon'    => 'fas fa-users',
+        'icon_color' => 'teal',
+        'submenu' => [
+            [
+                'text'  => 'Lista de Colaboradores',
+                'route' => 'colaboradores.index',
+                'icon'  => 'fas fa-list',
+            ],
+            [
+                'text'  => 'Bajas',
+                'route' => 'colaboradores.bajas',
+                'icon'  => 'fas fa-user-slash',
+            ],
         ],
     ],
 
+    ['header' => 'INVENTARIO'],
+
+    [
+        'text'    => 'Equipos de Cómputo',
+        'icon'    => 'fas fa-laptop',
+        'icon_color' => 'blue',
+        'submenu' => [
+            [
+                'text'  => 'Lista de Equipos',
+                'route' => 'equipos.index',
+                'icon'  => 'fas fa-list',
+            ],
+            [
+                'text'  => 'Asignaciones',
+                'route' => 'asignaciones.index',
+                'icon'  => 'fas fa-clipboard-list',
+            ],
+            [
+                'text'  => 'Historial',
+                'route' => 'asignaciones.historial',
+                'icon'  => 'fas fa-history',
+            ],
+        ],
+    ],
+
+    [
+        'text'    => 'Celulares',
+        'icon'    => 'fas fa-mobile-alt',
+        'icon_color' => 'green',
+        'submenu' => [
+            [
+                'text'  => 'Lista de Celulares',
+                'route' => 'celulares.index',
+                'icon'  => 'fas fa-list',
+            ],
+            [
+                'text'  => 'Asignaciones',
+                'route' => 'asignaciones-celulares.index',
+                'icon'  => 'fas fa-clipboard-list',
+            ],
+            [
+                'text'  => 'Historial',
+                'route' => 'asignaciones-celulares.historial',
+                'icon'  => 'fas fa-history',
+            ],
+        ],
+    ],
+
+    [
+        'text'    => 'Tablets',
+        'icon'    => 'fas fa-tablet-alt',
+        'icon_color' => 'purple',
+        'submenu' => [
+            [
+                'text'  => 'Lista de Tablets',
+                'route' => 'tablets.index',
+                'icon'  => 'fas fa-list',
+            ],
+            [
+                'text'  => 'Asignaciones',
+                'route' => 'asignaciones-tablets.index',
+                'icon'  => 'fas fa-clipboard-list',
+            ],
+            [
+                'text'  => 'Historial',
+                'route' => 'asignaciones-tablets.historial',
+                'icon'  => 'fas fa-history',
+            ],
+        ],
+    ],
+
+    ['header' => 'CATÁLOGOS'],
+
+    [
+        'text'    => 'Cuentas',
+        'icon'    => 'fas fa-user-lock',
+        'icon_color' => 'yellow',
+        'submenu' => [
+            [
+                'text'  => 'Lista de Cuentas',
+                'route' => 'cuentas.index',
+                'icon'  => 'fas fa-list',
+            ],
+        ],
+    ],
+
+    [
+        'text'       => 'Bajas',
+        'icon'       => 'fas fa-ban',
+        'icon_color' => 'red',
+        'submenu'    => [
+            [
+                'text'  => 'Equipos de Baja',
+                'route' => 'bajas.index',
+                'icon'  => 'fas fa-list',
+            ],
+        ],
+    ],
+
+    [
+        'text'  => 'Áreas',
+        'route' => 'areas.index',
+        'icon'  => 'fas fa-building',
+        'icon_color' => 'orange',
+    ],
+
+    [
+        'text'  => 'Ciudades',
+        'route' => 'ciudades.index',
+        'icon'  => 'fas fa-map-marker-alt',
+        'icon_color' => 'red',
+    ],
+
+    ['header' => 'ADMINISTRACIÓN'],
+
+    [
+        'text'  => 'Usuarios',
+        'route' => 'usuarios.index',
+        'icon'  => 'fas fa-users-cog',
+        'icon_color' => 'gray',
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------

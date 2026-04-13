@@ -13,6 +13,8 @@ use App\Http\Controllers\AsignacionCelularController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TabletController;
 use App\Http\Controllers\AsignacionTabletController;
+use App\Http\Controllers\BajaController;
+
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
 
@@ -55,6 +57,11 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
         ->name('asignaciones.historial');
     Route::put('asignaciones-celulares/{id}/devolver', [AsignacionCelularController::class, 'devolver'])
         ->name('asignaciones-celulares.devolver');
+        Route::get('asignaciones-celulares-historial', [AsignacionCelularController::class, 'historial'])
+    ->name('asignaciones-celulares.historial');
+
+Route::get('asignaciones-tablets-historial', [AsignacionTabletController::class, 'historial'])
+    ->name('asignaciones-tablets.historial');
 
     // Equipos — baja lógica solo para Gerente
     Route::resource('equipos', EquipoController::class)
@@ -95,10 +102,24 @@ Route::middleware(['auth', 'permission:ver colaboradores'])->group(function () {
     Route::resource('colaboradores', ColaboradorController::class)
         ->parameters(['colaboradores' => 'colaborador']);
 });
-Route::resource('usuarios', App\Http\Controllers\UsuarioController::class);
+Route::resource('usuarios', App\Http\Controllers\UsuarioController::class)
+    ->middleware(['auth', 'role:GerenteTIDS|AnalistaTI']);
 
 Route::get('colaboradores/{colaborador}/ficha-rrhh',
     [ColaboradorController::class, 'fichaRRHH']
 )->name('colaboradores.ficha_rrhh');
+
+
+
+
+Route::middleware(['auth', 'permission:ver todo'])->group(function () {
+    Route::get('bajas', [BajaController::class, 'index'])->name('bajas.index');
+    Route::post('bajas/equipos/{equipo}/reactivar', [BajaController::class, 'reactivarEquipo'])
+        ->name('bajas.equipos.reactivar');
+    Route::post('bajas/celulares/{celular}/reactivar', [BajaController::class, 'reactivarCelular'])
+        ->name('bajas.celulares.reactivar');
+    Route::post('bajas/tablets/{tablet}/reactivar', [BajaController::class, 'reactivarTablet'])
+        ->name('bajas.tablets.reactivar');
+});
 
 require __DIR__.'/auth.php';

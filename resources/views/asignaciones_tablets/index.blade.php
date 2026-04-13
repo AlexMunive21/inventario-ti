@@ -8,6 +8,9 @@
         <a href="{{ route('asignaciones-tablets.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nueva Asignación
         </a>
+        <a href="{{ route('asignaciones-tablets.historial') }}" class="btn btn-secondary">
+            <i class="fas fa-history"></i> Historial
+        </a>
     </div>
 @stop
 
@@ -49,21 +52,54 @@
                     </td>
                     <td>
                         @if(!$asignacion->fecha_devolucion)
-                        <form action="{{ route('asignaciones-tablets.devolver', $asignacion->id) }}"
-                              method="POST" style="display:inline;">
-                            @csrf
-                            @method('PUT')
-                            <button class="btn btn-sm btn-warning"
-                                    onclick="return confirm('¿Devolver esta tablet?')"
+                            <button type="button"
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="modal"
+                                    data-target="#modalTablet{{ $asignacion->id }}"
                                     title="Devolver">
                                 <i class="fas fa-undo"></i> Devolver
                             </button>
-                        </form>
                         @else
                             <span class="text-muted">—</span>
                         @endif
                     </td>
                 </tr>
+
+                {{-- Modal devolución tablet --}}
+                @if(!$asignacion->fecha_devolucion)
+                <div class="modal fade" id="modalTablet{{ $asignacion->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('asignaciones-tablets.devolver', $asignacion->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Devolver tablet</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Confirmas la devolución de
+                                        <strong>{{ $asignacion->tablet->marca }} {{ $asignacion->tablet->modelo }}</strong>
+                                        de <strong>{{ $asignacion->colaborador->nombre }} {{ $asignacion->colaborador->apellido_paterno }}</strong>?
+                                    </p>
+                                    <div class="form-group">
+                                        <label>Condición de la tablet al momento de la devolución</label>
+                                        <textarea name="observaciones_devolucion"
+                                                  class="form-control"
+                                                  rows="3"
+                                                  placeholder="Ej: Tablet en buenas condiciones, ligeros rayones en la pantalla..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-warning">Confirmar devolución</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 @empty
                 <tr>
                     <td colspan="6" class="text-center text-muted py-4">No hay asignaciones registradas.</td>
@@ -73,4 +109,5 @@
         </table>
     </div>
 </div>
+
 @stop

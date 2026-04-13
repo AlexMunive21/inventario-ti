@@ -42,4 +42,8 @@ class Celular extends Model
         return $this->hasOne(AsignacionCelular::class)
             ->whereNull('fecha_liberacion');
     }
+    public function reactivaciones()
+    {
+        return $this->hasMany(ReactivacionCelular::class);
+    }
 }

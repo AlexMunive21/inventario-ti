@@ -60,12 +60,11 @@ class AsignacionController extends Controller
             ->with('success', 'Equipo asignado correctamente');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $asignacion = Asignacion::findOrFail($id);
 
         $equipo = Equipo::find($asignacion->equipo_id);
-
         if ($equipo) {
             $equipo->estatus = 'disponible';
             $equipo->save();
@@ -73,10 +72,11 @@ class AsignacionController extends Controller
 
         $asignacion->activa = 0;
         $asignacion->fecha_devolucion = now();
+        $asignacion->observaciones_devolucion = $request->observaciones_devolucion;
         $asignacion->save();
 
         return redirect()->route('asignaciones.index')
-            ->with('success','Equipo liberado correctamente');
+            ->with('success', 'Equipo liberado correctamente.');
     }
 
     public function historial()

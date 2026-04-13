@@ -60,15 +60,27 @@ class AsignacionTabletController extends Controller
             ->with('success', 'Tablet asignada correctamente.');
     }
 
-    public function devolver($id)
+    public function devolver(Request $request, $id)
     {
         $asignacion = AsignacionTablet::findOrFail($id);
 
-        $asignacion->update(['fecha_devolucion' => now()]);
+        $asignacion->update([
+            'fecha_devolucion'         => now(),
+            'observaciones_devolucion' => $request->observaciones_devolucion, 
+        ]);
 
         $asignacion->tablet->update(['estatus' => 'disponible']);
 
         return redirect()->back()
             ->with('success', 'Tablet devuelta correctamente.');
+    }
+
+    public function historial()
+    {
+        $asignaciones = AsignacionTablet::with(['tablet', 'colaborador'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('asignaciones_tablets.historial', compact('asignaciones'));
     }
 }
