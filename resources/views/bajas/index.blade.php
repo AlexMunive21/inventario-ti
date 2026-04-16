@@ -61,6 +61,7 @@
                             <td>{{ $equipo->modelo }}</td>
                             <td>{{ $equipo->numero_serie }}</td>
                             <td>{{ $equipo->area->nombre ?? '—' }}</td>
+                            @role ('GerenteTIDS')
                             <td>
                                 <button type="button"
                                         class="btn btn-sm btn-success"
@@ -69,6 +70,7 @@
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
                             </td>
+                            @endrole
                         </tr>
 
                         {{-- Modal reactivar equipo --}}
@@ -144,6 +146,7 @@
                             <td>{{ $celular->modelo }}</td>
                             <td>{{ $celular->imei }}</td>
                             <td>{{ $celular->area->nombre ?? '—' }}</td>
+                            @role ('GerenteTIDS')
                             <td>
                                 <button type="button"
                                         class="btn btn-sm btn-success"
@@ -152,6 +155,7 @@
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
                             </td>
+                            @endrole
                         </tr>
 
                         {{-- Modal reactivar celular --}}
@@ -227,6 +231,7 @@
                             <td>{{ $tablet->modelo }}</td>
                             <td>{{ $tablet->numero_serie }}</td>
                             <td>{{ $tablet->area->nombre ?? '—' }}</td>
+                            @role ('GerenteTIDS')
                             <td>
                                 <button type="button"
                                         class="btn btn-sm btn-success"
@@ -235,6 +240,7 @@
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
                             </td>
+                            @endrole
                         </tr>
 
                         {{-- Modal reactivar tablet --}}

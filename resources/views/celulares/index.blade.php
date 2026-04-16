@@ -66,6 +66,8 @@
                                     Editar
                                 </a>
 
+                                @role ('GerenteTIDS')
+
                                 @if($celular->estatus !== 'baja')
                                     <form action="{{ route('celulares.destroy', $celular) }}"
                                           method="POST"
@@ -78,6 +80,7 @@
                                         </button>
                                     </form>
                                 @endif
+                                @endrole
                             </td>
                         </tr>
                     @empty

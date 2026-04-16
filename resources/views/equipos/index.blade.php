@@ -73,6 +73,7 @@
                             <i class="bi bi-file-earmark-text"></i>
                         </a>
 
+                        @role ('GerenteTIDS')
                         <form action="{{ route('equipos.destroy', $equipo) }}" 
                             method="POST" 
                             style="display:inline;">
@@ -82,6 +83,7 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endrole
                     </td>
                 </tr>
                 @endforeach
