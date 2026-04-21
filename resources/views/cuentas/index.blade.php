@@ -74,7 +74,7 @@
 
                     <div class="form-group">
                         <label>Contraseña</label>
-                        <input type="text" name="password" class="form-control">
+                        <input type="text" name="confidencial" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -86,7 +86,14 @@
                             <option value="red_social">Red Social</option>
                             <option value="modem">Modem</option>
                             <option value="camara">Cámara IP</option>
+                            <option value="sistema">Sistema</option>
+                            <option value="otro">Otro</option>
                         </select>
+                    </div>
+
+                    <div>
+                        <label>Observaciones</label>                            
+                        <textarea name="observaciones" class="form-control" rows="3"></textarea>                        
                     </div>
 
                     <div class="form-group">

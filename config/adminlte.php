@@ -421,6 +421,8 @@ return [
         ],
     ],
 
+    
+
     ['header' => 'INVENTARIO'],
 
     [
@@ -442,6 +444,29 @@ return [
                 'text'  => 'Historial',
                 'route' => 'asignaciones.historial',
                 'icon'  => 'fas fa-history',
+            ],
+        ],
+    ],
+
+    [
+        'text'    => 'PC Escritorio',
+        'icon'    => 'fas fa-desktop',
+        'icon_color' => 'navy',
+        'submenu' => [
+            [
+                'text'  => 'Equipos Armados',
+                'route' => 'equipos-escritorio.index',
+                'icon'  => 'fas fa-list',
+            ],
+            [
+                'text'  => 'CPUs y Monitores',
+                'route' => 'componentes.index',
+                'icon'  => 'fas fa-microchip',
+            ],
+            [
+                'text'  => 'Periféricos',
+                'route' => 'perifericos.index',
+                'icon'  => 'fas fa-keyboard',
             ],
         ],
     ],

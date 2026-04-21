@@ -14,6 +14,9 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TabletController;
 use App\Http\Controllers\AsignacionTabletController;
 use App\Http\Controllers\BajaController;
+use App\Http\Controllers\ComponenteController;
+use App\Http\Controllers\PerifericoController;
+use App\Http\Controllers\EquipoEscritorioController;
 
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
@@ -121,5 +124,26 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     Route::post('bajas/tablets/{tablet}/reactivar', [BajaController::class, 'reactivarTablet'])
         ->name('bajas.tablets.reactivar');
 });
+
+Route::middleware(['auth', 'permission:ver todo'])->group(function () {
+
+    Route::resource('componentes', ComponenteController::class);
+    Route::resource('perifericos', PerifericoController::class);
+
+    Route::resource('equipos-escritorio', EquipoEscritorioController::class)
+        ->parameters(['equipos-escritorio' => 'equipoEscritorio']);
+
+    Route::post('equipos-escritorio/{equipoEscritorio}/cambiar-componente',
+        [EquipoEscritorioController::class, 'cambiarComponente'])
+        ->name('equipos-escritorio.cambiarComponente');
+
+    Route::post('equipos-escritorio/{equipoEscritorio}/asignar',
+        [EquipoEscritorioController::class, 'asignar'])
+        ->name('equipos-escritorio.asignar');
+
+    Route::post('equipos-escritorio/{equipoEscritorio}/liberar',
+        [EquipoEscritorioController::class, 'liberar'])
+        ->name('equipos-escritorio.liberar');
+}); 
 
 require __DIR__.'/auth.php';

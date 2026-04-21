@@ -33,7 +33,7 @@ class AccountController extends Controller
         Account::create([
             'name' => $request->name,
             'username' => $request->username,
-            'password' => bcrypt($request->password),
+            'password' => $request->password,
             'type' => $request->type,
             'colaborador_id' => $request->colaborador_id,
             'is_ti' => $request->colaborador_id ? false : true,
