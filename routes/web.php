@@ -17,6 +17,8 @@ use App\Http\Controllers\BajaController;
 use App\Http\Controllers\ComponenteController;
 use App\Http\Controllers\PerifericoController;
 use App\Http\Controllers\EquipoEscritorioController;
+use App\Http\Controllers\DocumentTemplateController;
+use App\Http\Controllers\DocumentoAsignacionController;
 
 
 // Dashboard (raíz y /dashboard apuntan al mismo lugar)
@@ -42,7 +44,8 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
         ->parameters(['ciudades' => 'ciudad']);
     Route::resource('asignaciones', AsignacionController::class);
     Route::resource('asignaciones-celulares', AsignacionCelularController::class);
-    Route::resource('cuentas', AccountController::class);
+    Route::resource('cuentas', AccountController::class)
+    ->parameters(['cuentas' => 'cuenta']);
     Route::resource('usuarios', App\Http\Controllers\UsuarioController::class);
 
     Route::resource('tablets', TabletController::class)
@@ -145,5 +148,64 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
         [EquipoEscritorioController::class, 'liberar'])
         ->name('equipos-escritorio.liberar');
 }); 
+
+
+// Templates — solo AnalistaTI, AnalistaDS y Gerente
+Route::middleware(['auth', 'role:AnalistaTI|AnalistaDS|GerenteTIDS'])->group(function () {
+    Route::get('templates', [DocumentTemplateController::class, 'index'])
+        ->name('templates.index');
+    Route::post('templates', [DocumentTemplateController::class, 'store'])
+        ->name('templates.store');
+    Route::delete('templates/{template}', [DocumentTemplateController::class, 'destroy'])
+        ->name('templates.destroy');
+});
+
+// Documentos desde asignaciones
+Route::middleware(['auth', 'permission:ver todo'])->group(function () {
+
+    // Equipos de cómputo / laptops
+    Route::get('asignaciones/{asignacion}/generar/{tipo}',
+        [DocumentoAsignacionController::class, 'generarEquipo'])
+        ->name('asignaciones.generar');
+    Route::post('asignaciones/{asignacion}/subir-pdf',
+        [DocumentoAsignacionController::class, 'subirPdfEquipo'])
+        ->name('asignaciones.subirPdf');
+    Route::get('asignaciones/{asignacion}/descargar-pdf',
+        [DocumentoAsignacionController::class, 'descargarPdfEquipo'])
+        ->name('asignaciones.descargarPdf');
+
+    // Celulares
+    Route::get('asignaciones-celulares/{asignacion}/generar/{tipo}',
+        [DocumentoAsignacionController::class, 'generarCelular'])
+        ->name('asignaciones-celulares.generar');
+    Route::post('asignaciones-celulares/{asignacion}/subir-pdf',
+        [DocumentoAsignacionController::class, 'subirPdfCelular'])
+        ->name('asignaciones-celulares.subirPdf');
+    Route::get('asignaciones-celulares/{asignacion}/descargar-pdf',
+        [DocumentoAsignacionController::class, 'descargarPdfCelular'])
+        ->name('asignaciones-celulares.descargarPdf');
+
+    // Tablets
+    Route::get('asignaciones-tablets/{asignacion}/generar/{tipo}',
+        [DocumentoAsignacionController::class, 'generarTablet'])
+        ->name('asignaciones-tablets.generar');
+    Route::post('asignaciones-tablets/{asignacion}/subir-pdf',
+        [DocumentoAsignacionController::class, 'subirPdfTablet'])
+        ->name('asignaciones-tablets.subirPdf');
+    Route::get('asignaciones-tablets/{asignacion}/descargar-pdf',
+        [DocumentoAsignacionController::class, 'descargarPdfTablet'])
+        ->name('asignaciones-tablets.descargarPdf');
+
+    // Escritorio
+    Route::get('asignaciones-escritorio/{asignacion}/generar/{tipo}',
+        [DocumentoAsignacionController::class, 'generarEscritorio'])
+        ->name('asignaciones-escritorio.generar');
+    Route::post('asignaciones-escritorio/{asignacion}/subir-pdf',
+        [DocumentoAsignacionController::class, 'subirPdfEscritorio'])
+        ->name('asignaciones-escritorio.subirPdf');
+    Route::get('asignaciones-escritorio/{asignacion}/descargar-pdf',
+        [DocumentoAsignacionController::class, 'descargarPdfEscritorio'])
+        ->name('asignaciones-escritorio.descargarPdf');
+});
 
 require __DIR__.'/auth.php';

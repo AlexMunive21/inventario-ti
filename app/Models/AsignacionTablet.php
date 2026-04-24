@@ -15,7 +15,8 @@ class AsignacionTablet extends Model
         'fecha_devolucion',
         'observaciones',
         'observaciones_devolucion',
-        'activa'
+        'activa',
+        'pdf_firmado',
     ];
 
     public function tablet()

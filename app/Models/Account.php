@@ -14,7 +14,8 @@ class Account extends Model
         'password',
         'type',
         'colaborador_id',
-        'is_ti'
+        'is_ti',
+        'observaciones',
     ];
     public function Colaborador()
     {
