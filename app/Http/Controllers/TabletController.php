@@ -65,9 +65,18 @@ class TabletController extends Controller
 
     public function destroy(Tablet $tablet)
     {
-        if ($tablet->estatus === 'asignado') {
+        $tieneAsignacion = \App\Models\AsignacionTablet::where('tablet_id', $tablet->id)
+            ->whereNull('fecha_devolucion')
+            ->exists();
+
+        if ($tieneAsignacion) {
             return redirect()->route('tablets.index')
-                ->with('error', 'No puedes dar de baja una tablet asignada. Primero debes liberarla.');
+                ->with('error', 'No puedes dar de baja esta tablet porque tiene una asignación activa. Ve a Asignaciones Tablets y libérala primero.');
+        }
+
+        if ($tablet->estatus === 'baja') {
+            return redirect()->route('tablets.index')
+                ->with('error', 'Esta tablet ya está dada de baja.');
         }
 
         $tablet->update(['estatus' => 'baja']);

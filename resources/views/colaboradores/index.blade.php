@@ -60,7 +60,6 @@
                 </a>
                 @endrole
 
-
                 @role('GerenteTIDS|AnalistaTI')
                 {{-- Editar --}}
                 <a href="{{ route('colaboradores.edit',$col) }}"

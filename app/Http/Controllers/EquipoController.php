@@ -76,9 +76,14 @@ class EquipoController extends Controller
 
     public function destroy(Equipo $equipo)
     {
-        if ($equipo->estatus === 'asignado') {
+        // Verificar por asignación activa en BD, no solo por estatus
+        $tieneAsignacion = \App\Models\Asignacion::where('equipo_id', $equipo->id)
+            ->where('activa', 1)
+            ->exists();
+
+        if ($tieneAsignacion) {
             return redirect()->route('equipos.index')
-                ->with('error', 'No puedes dar de baja un equipo que está asignado. Primero debes liberarlo.');
+                ->with('error', 'No puedes dar de baja este equipo porque tiene una asignación activa. Ve a Asignaciones y libéralo primero.');
         }
 
         if ($equipo->estatus === 'baja') {
@@ -86,20 +91,18 @@ class EquipoController extends Controller
                 ->with('error', 'Este equipo ya está dado de baja.');
         }
 
-        $equipo->update([
-            'estatus' => 'baja'
-        ]);
+        $equipo->update(['estatus' => 'baja']);
 
         return redirect()->route('equipos.index')
             ->with('success', 'Equipo dado de baja correctamente.');
     }
 
-        public function show(Equipo $equipo)
-        {
-            $equipo->load('asignaciones.colaborador');
+    public function show(Equipo $equipo)
+    {
+        $equipo->load('asignaciones.colaborador');
 
-            return view('equipos.show', compact('equipo'));
-        }
+        return view('equipos.show', compact('equipo'));
+    }
 
         public function responsiva(Equipo $equipo)
     {

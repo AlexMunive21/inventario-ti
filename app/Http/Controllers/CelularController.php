@@ -77,16 +77,21 @@ class CelularController extends Controller
 
     public function destroy(Celular $celular)
     {
-        // No permitir baja si está asignado
-        if ($celular->estatus === 'asignado') {
+        $tieneAsignacion = \App\Models\AsignacionCelular::where('celular_id', $celular->id)
+            ->whereNull('fecha_devolucion')
+            ->exists();
+
+        if ($tieneAsignacion) {
             return redirect()->route('celulares.index')
-                ->with('error', 'No puedes dar de baja un celular que está asignado.');
+                ->with('error', 'No puedes dar de baja este celular porque tiene una asignación activa. Ve a Asignaciones Celulares y libéralo primero.');
         }
 
-        // Baja lógica
-        $celular->update([
-            'estatus' => 'baja'
-        ]);
+        if ($celular->estatus === 'baja') {
+            return redirect()->route('celulares.index')
+                ->with('error', 'Este celular ya está dado de baja.');
+        }
+
+        $celular->update(['estatus' => 'baja']);
 
         return redirect()->route('celulares.index')
             ->with('success', 'Celular dado de baja correctamente.');

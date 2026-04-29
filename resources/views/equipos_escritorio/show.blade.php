@@ -5,9 +5,24 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1>{{ $equipoEscritorio->nombre }}</h1>
-        <a href="{{ route('equipos-escritorio.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Regresar
-        </a>
+        <div>
+            @role('GerenteTIDS')
+            @if($equipoEscritorio->estatus !== 'baja' && !$asignacionActiva)
+            <form action="{{ route('equipos-escritorio.destroy', $equipoEscritorio) }}"
+                  method="POST" style="display:inline;">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-danger btn-sm mr-2"
+                        onclick="return confirm('¿Dar de baja este equipo? Los componentes quedarán disponibles.')">
+                    <i class="fas fa-ban"></i> Dar de baja
+                </button>
+            </form>
+            @endif
+            @endrole
+            <a href="{{ route('equipos-escritorio.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Regresar
+            </a>
+        </div>
     </div>
 @stop
 
@@ -33,6 +48,12 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title"><i class="fas fa-desktop mr-2"></i>Componentes del equipo</h3>
+                <div class="card-tools">
+                    @php
+                        $badgeColor = ['disponible'=>'success','asignado'=>'primary','mantenimiento'=>'warning','baja'=>'danger'][$equipoEscritorio->estatus] ?? 'secondary';
+                    @endphp
+                    <span class="badge badge-{{ $badgeColor }}">{{ ucfirst($equipoEscritorio->estatus) }}</span>
+                </div>
             </div>
             <div class="card-body">
                 <table class="table table-sm">
@@ -72,7 +93,14 @@
                     <tr>
                         <th>{{ ucfirst($periferico->tipo) }}</th>
                         <td>{{ $periferico->marca }} {{ $periferico->modelo }}</td>
-                        <td></td>
+                        <td>
+                            @role('AnalistaTI|GerenteTIDS')
+                            <button class="btn btn-xs btn-warning" data-toggle="modal"
+                                    data-target="#modalCambiarPeriferico{{ $periferico->id }}">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                            @endrole
+                        </td>
                     </tr>
                     @endforeach
                 </table>
@@ -88,21 +116,69 @@
             </div>
             <div class="card-body">
                 @if($asignacionActiva)
-                    <p><strong>Colaborador:</strong>
-                        {{ $asignacionActiva->colaborador->nombre }}
-                        {{ $asignacionActiva->colaborador->apellido_paterno }}
-                    </p>
-                    <p><strong>Desde:</strong>
-                        {{ \Carbon\Carbon::parse($asignacionActiva->fecha_asignacion)->format('d/m/Y') }}
-                    </p>
-                    <p><strong>Puesto:</strong> {{ $asignacionActiva->colaborador->puesto ?? '—' }}</p>
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Colaborador</th>
+                            <td>{{ $asignacionActiva->colaborador->nombre }} {{ $asignacionActiva->colaborador->apellido_paterno }}</td>
+                        </tr>
+                        <tr>
+                            <th>Puesto</th>
+                            <td>{{ $asignacionActiva->colaborador->puesto ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Área</th>
+                            <td>{{ $asignacionActiva->colaborador->area->nombre ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Desde</th>
+                            <td>{{ \Carbon\Carbon::parse($asignacionActiva->fecha_asignacion)->format('d/m/Y') }}</td>
+                        </tr>
+                        @if($asignacionActiva->pdf_firmado)
+                        <tr>
+                            <th>PDF firmado</th>
+                            <td>
+                                <a href="{{ route('asignaciones-escritorio.descargarPdf', $asignacionActiva->id) }}"
+                                   class="btn btn-xs btn-danger">
+                                    <i class="fas fa-file-pdf"></i> Descargar
+                                </a>
+                            </td>
+                        </tr>
+                        @endif
+                    </table>
 
-                    {{-- Liberar --}}
-                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLiberar">
-                        <i class="fas fa-undo"></i> Liberar equipo
-                    </button>
+                    <div class="mt-2">
+                        {{-- Documentos --}}
+                        @role('AnalistaTI|AnalistaDS|GerenteTIDS')
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-sm btn-info dropdown-toggle"
+                                    data-toggle="dropdown">
+                                <i class="fas fa-file-alt"></i> Documentos
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"
+                                   href="{{ route('asignaciones-escritorio.generar', [$asignacionActiva->id, 'ficha_tecnica']) }}">
+                                    <i class="fas fa-file-word text-success mr-1"></i> Ficha Técnica
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"
+                                   data-toggle="modal" data-target="#modalPdfEscritorio">
+                                    <i class="fas fa-upload text-secondary mr-1"></i>
+                                    {{ $asignacionActiva->pdf_firmado ? 'Reemplazar PDF firmado' : 'Subir PDF firmado' }}
+                                </a>
+                            </div>
+                        </div>
+                        @endrole
+
+                        {{-- Liberar --}}
+                        <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLiberar">
+                            <i class="fas fa-undo"></i> Liberar equipo
+                        </button>
+                    </div>
                 @else
-                    <p class="text-muted">Este equipo no tiene asignación activa.</p>
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Este equipo no tiene asignación activa.
+                    </p>
                     @if($equipoEscritorio->estatus === 'disponible')
                     <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAsignar">
                         <i class="fas fa-user-plus"></i> Asignar colaborador
@@ -115,25 +191,31 @@
 
 </div>
 
-{{-- Historial de asignaciones --}}
-<div class="card mt-2">
+{{-- ✅ Fix 5 — Historial mejorado --}}
+<div class="card mt-3">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-history mr-2"></i>Historial de asignaciones</h3>
     </div>
     <div class="card-body table-responsive p-0">
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm mb-0">
             <thead class="thead-dark">
                 <tr>
                     <th>Colaborador</th>
+                    <th>Puesto</th>
                     <th>Fecha asignación</th>
                     <th>Fecha devolución</th>
                     <th>Condición devolución</th>
+                    <th>PDF</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($equipoEscritorio->asignaciones as $asig)
+                @forelse($equipoEscritorio->asignaciones()->with('colaborador')->orderBy('created_at','desc')->get() as $asig)
                 <tr>
-                    <td>{{ $asig->colaborador->nombre }} {{ $asig->colaborador->apellido_paterno }}</td>
+                    <td>
+                        {{ $asig->colaborador->nombre ?? '—' }}
+                        {{ $asig->colaborador->apellido_paterno ?? '' }}
+                    </td>
+                    <td>{{ $asig->colaborador->puesto ?? '—' }}</td>
                     <td>{{ \Carbon\Carbon::parse($asig->fecha_asignacion)->format('d/m/Y') }}</td>
                     <td>
                         @if($asig->fecha_devolucion)
@@ -143,10 +225,20 @@
                         @endif
                     </td>
                     <td>{{ $asig->observaciones_devolucion ?? '—' }}</td>
+                    <td>
+                        @if($asig->pdf_firmado)
+                            <a href="{{ route('asignaciones-escritorio.descargarPdf', $asig->id) }}"
+                               class="btn btn-xs btn-danger" title="Descargar PDF firmado">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center text-muted">Sin historial.</td>
+                    <td colspan="6" class="text-center text-muted py-3">Sin historial de asignaciones.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -221,6 +313,36 @@
     </div>
 </div>
 
+{{-- Modal subir PDF firmado --}}
+<div class="modal fade" id="modalPdfEscritorio" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @if($asignacionActiva)
+            <form action="{{ route('asignaciones-escritorio.subirPdf', $asignacionActiva->id) }}"
+                  method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Subir PDF firmado</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Archivo PDF</label>
+                        <input type="file" name="pdf_firmado" class="form-control-file" accept=".pdf" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Subir
+                    </button>
+                </div>
+            </form>
+            @endif
+        </div>
+    </div>
+</div>
+
 {{-- Modal cambiar CPU --}}
 <div class="modal fade" id="modalCambiarCpu" tabindex="-1">
     <div class="modal-dialog">
@@ -290,6 +412,48 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-warning">Cambiar Monitor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
+{{-- Modales cambiar periférico --}}
+@foreach($equipoEscritorio->perifericos as $periferico)
+<div class="modal fade" id="modalCambiarPeriferico{{ $periferico->id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('equipos-escritorio.cambiarPeriferico', $equipoEscritorio) }}" method="POST">
+                @csrf
+                <input type="hidden" name="periferico_viejo_id" value="{{ $periferico->id }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar {{ ucfirst($periferico->tipo) }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">
+                        {{ ucfirst($periferico->tipo) }} actual:
+                        <strong>{{ $periferico->marca }} {{ $periferico->modelo }}</strong>
+                    </p>
+                    <div class="form-group">
+                        <label>Nuevo {{ ucfirst($periferico->tipo) }}</label>
+                        <select name="periferico_nuevo_id" class="form-control" required>
+                            <option value="">-- Selecciona --</option>
+                            @foreach(\App\Models\Periferico::where('tipo', $periferico->tipo)->where('cantidad_disponible', '>', 0)->get() as $p)
+                                <option value="{{ $p->id }}">
+                                    {{ $p->marca }} {{ $p->modelo }}
+                                    ({{ $p->cantidad_disponible }} disponibles)
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-exchange-alt"></i> Cambiar {{ ucfirst($periferico->tipo) }}
+                    </button>
                 </div>
             </form>
         </div>

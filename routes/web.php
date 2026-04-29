@@ -206,6 +206,34 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     Route::get('asignaciones-escritorio/{asignacion}/descargar-pdf',
         [DocumentoAsignacionController::class, 'descargarPdfEscritorio'])
         ->name('asignaciones-escritorio.descargarPdf');
+        // Componentes — reactivar
+    Route::post('componentes/{componente}/reactivar', [ComponenteController::class, 'reactivar'])
+        ->name('componentes.reactivar')
+        ->middleware('role:GerenteTIDS|AnalistaTI');
+
+    // Periféricos — baja parcial y eliminar
+    Route::post('perifericos/{periferico}/dar-de-baja', [PerifericoController::class, 'darDeBaja'])
+        ->name('perifericos.darDeBaja');
+    Route::delete('perifericos/{periferico}', [PerifericoController::class, 'destroy'])
+        ->name('perifericos.destroy')
+        ->middleware('role:GerenteTIDS');
+
+    // Escritorio — cambiar periférico
+    Route::post('equipos-escritorio/{equipoEscritorio}/cambiar-periferico',
+        [EquipoEscritorioController::class, 'cambiarPeriferico'])
+        ->name('equipos-escritorio.cambiarPeriferico');
+        
+    // Escritorio — asignar y liberar
+    Route::post('bajas/componentes/{componente}/reactivar',
+    [BajaController::class, 'reactivarComponente'])
+    ->name('bajas.componentes.reactivar');
+
+    // Celulares — baja lógica solo para Gerente
+    Route::delete('equipos-escritorio/{equipoEscritorio}',
+    [EquipoEscritorioController::class, 'destroy'])
+    ->name('equipos-escritorio.destroy')
+    ->middleware('role:GerenteTIDS');
+
 });
 
 require __DIR__.'/auth.php';

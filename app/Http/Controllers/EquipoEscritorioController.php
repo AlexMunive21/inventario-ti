@@ -172,4 +172,60 @@ class EquipoEscritorioController extends Controller
         return redirect()->route('equipos-escritorio.show', $equipoEscritorio)
             ->with('success', 'Equipo liberado correctamente.');
     }
+
+    // Cambiar un periférico (teclado o mouse)
+    public function cambiarPeriferico(Request $request, EquipoEscritorio $equipoEscritorio)
+    {
+        $request->validate([
+            'periferico_viejo_id' => 'required|exists:perifericos,id',
+            'periferico_nuevo_id' => 'required|exists:perifericos,id',
+        ]);
+
+        DB::transaction(function () use ($request, $equipoEscritorio) {
+            $viejo = Periferico::findOrFail($request->periferico_viejo_id);
+            $nuevo = Periferico::findOrFail($request->periferico_nuevo_id);
+
+            // Desvincula el viejo y devuelve cantidad
+            $equipoEscritorio->perifericos()->detach($viejo->id);
+            $viejo->increment('cantidad_disponible');
+
+            // Vincula el nuevo y descuenta cantidad
+            $equipoEscritorio->perifericos()->attach($nuevo->id, ['cantidad' => 1]);
+            $nuevo->decrement('cantidad_disponible');
+        });
+
+        return redirect()->back()
+            ->with('success', 'Periférico reemplazado correctamente.');
+    }
+    public function destroy(EquipoEscritorio $equipoEscritorio)
+    {
+        // Verificar si tiene asignación activa
+        $tieneAsignacion = $equipoEscritorio->asignaciones()
+            ->where('activa', 1)
+            ->exists();
+
+        if ($tieneAsignacion) {
+            return redirect()->route('equipos-escritorio.show', $equipoEscritorio)
+                ->with('error', 'No puedes dar de baja este equipo porque tiene una asignación activa. Libéralo primero.');
+        }
+
+        if ($equipoEscritorio->estatus === 'baja') {
+            return redirect()->route('equipos-escritorio.index')
+                ->with('error', 'Este equipo ya está dado de baja.');
+        }
+
+        // Liberar componentes al dar de baja
+        $equipoEscritorio->cpu()->update(['estatus' => 'disponible']);
+        $equipoEscritorio->monitores()->update(['estatus' => 'disponible']);
+
+        // Devolver periféricos
+        foreach ($equipoEscritorio->perifericos as $periferico) {
+            $periferico->increment('cantidad_disponible');
+        }
+
+        $equipoEscritorio->update(['estatus' => 'baja']);
+
+        return redirect()->route('equipos-escritorio.index')
+            ->with('success', 'Equipo de escritorio dado de baja correctamente.');
+    }
 }

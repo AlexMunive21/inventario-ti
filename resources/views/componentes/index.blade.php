@@ -69,20 +69,38 @@
                                 <span class="badge badge-{{ $badge }}">{{ ucfirst($cpu->estatus) }}</span>
                             </td>
                             <td>
+                                @if($cpu->estatus !== 'baja')
                                 <a href="{{ route('componentes.edit', $cpu) }}"
-                                   class="btn btn-sm btn-warning">
+                                class="btn btn-sm btn-warning" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @role('GerenteTIDS')
+                                @endif
+
+                                @role('GerenteTIDS|AnalistaTI')
+                                @if($cpu->estatus === 'disponible')
                                 <form action="{{ route('componentes.destroy', $cpu) }}"
-                                      method="POST" style="display:inline;">
+                                    method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Dar de baja este CPU?')">
+                                            onclick="return confirm('¿Dar de baja este CPU?')"
+                                            title="Dar de baja">
                                         <i class="fas fa-ban"></i>
                                     </button>
                                 </form>
+                                @endif
+
+                                @if($cpu->estatus === 'baja')
+                                <form action="{{ route('componentes.reactivar', $cpu) }}"
+                                    method="POST" style="display:inline;">
+                                    @csrf
+                                    <button class="btn btn-sm btn-success"
+                                            onclick="return confirm('¿Reactivar este CPU?')"
+                                            title="Reactivar">
+                                        <i class="fas fa-redo"></i> Reactivar
+                                    </button>
+                                </form>
+                                @endif
                                 @endrole
                             </td>
                         </tr>
@@ -124,20 +142,38 @@
                                 <span class="badge badge-{{ $badge }}">{{ ucfirst($monitor->estatus) }}</span>
                             </td>
                             <td>
+                                @if($monitor->estatus !== 'baja')
                                 <a href="{{ route('componentes.edit', $monitor) }}"
-                                   class="btn btn-sm btn-warning">
+                                class="btn btn-sm btn-warning" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @role('GerenteTIDS')
+                                @endif
+
+                                @role('GerenteTIDS|AnalistaTI')
+                                @if($monitor->estatus === 'disponible')
                                 <form action="{{ route('componentes.destroy', $monitor) }}"
-                                      method="POST" style="display:inline;">
+                                    method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Dar de baja este monitor?')">
+                                            onclick="return confirm('¿Dar de baja este monitor?')"
+                                            title="Dar de baja">
                                         <i class="fas fa-ban"></i>
                                     </button>
                                 </form>
+                                @endif
+
+                                @if($monitor->estatus === 'baja')
+                                <form action="{{ route('componentes.reactivar', $monitor) }}"
+                                    method="POST" style="display:inline;">
+                                    @csrf
+                                    <button class="btn btn-sm btn-success"
+                                            onclick="return confirm('¿Reactivar este monitor?')"
+                                            title="Reactivar">
+                                        <i class="fas fa-redo"></i> Reactivar
+                                    </button>
+                                </form>
+                                @endif
                                 @endrole
                             </td>
                         </tr>

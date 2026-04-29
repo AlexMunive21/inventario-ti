@@ -36,6 +36,18 @@
                     <span class="badge badge-danger ml-1">{{ $tablets->count() }}</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#cpus">
+                    <i class="fas fa-microchip"></i> CPUs
+                    <span class="badge badge-danger ml-1">{{ $cpus->count() }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#monitores">
+                    <i class="fas fa-desktop"></i> Monitores
+                    <span class="badge badge-danger ml-1">{{ $monitores->count() }}</span>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -61,26 +73,24 @@
                             <td>{{ $equipo->modelo }}</td>
                             <td>{{ $equipo->numero_serie }}</td>
                             <td>{{ $equipo->area->nombre ?? '—' }}</td>
-                            @role ('GerenteTIDS')
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm btn-success"
+                                @role('GerenteTIDS')
+                                <button type="button" class="btn btn-sm btn-success"
                                         data-toggle="modal"
                                         data-target="#modalEquipo{{ $equipo->id }}">
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
+                                @endrole
                             </td>
-                            @endrole
                         </tr>
 
-                        {{-- Modal reactivar equipo --}}
                         <div class="modal fade" id="modalEquipo{{ $equipo->id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="{{ route('bajas.equipos.reactivar', $equipo->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Reactivar equipo — {{ $equipo->marca }} {{ $equipo->modelo }}</h5>
+                                            <h5 class="modal-title">Reactivar — {{ $equipo->marca }} {{ $equipo->modelo }}</h5>
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -96,15 +106,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Fecha de reactivación</label>
-                                                <input type="date" name="fecha_reactivacion"
-                                                       class="form-control"
-                                                       value="{{ date('Y-m-d') }}" required>
+                                                <input type="date" name="fecha_reactivacion" class="form-control" value="{{ date('Y-m-d') }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Autorizó</label>
-                                                <input type="text" name="autorizo"
-                                                       class="form-control"
-                                                       placeholder="Nombre de quien autorizó" required>
+                                                <input type="text" name="autorizo" class="form-control" placeholder="Nombre de quien autorizó" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -146,26 +152,24 @@
                             <td>{{ $celular->modelo }}</td>
                             <td>{{ $celular->imei }}</td>
                             <td>{{ $celular->area->nombre ?? '—' }}</td>
-                            @role ('GerenteTIDS')
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm btn-success"
+                                @role('GerenteTIDS')
+                                <button type="button" class="btn btn-sm btn-success"
                                         data-toggle="modal"
                                         data-target="#modalCelular{{ $celular->id }}">
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
+                                @endrole
                             </td>
-                            @endrole
                         </tr>
 
-                        {{-- Modal reactivar celular --}}
                         <div class="modal fade" id="modalCelular{{ $celular->id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="{{ route('bajas.celulares.reactivar', $celular->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Reactivar celular — {{ $celular->marca }} {{ $celular->modelo }}</h5>
+                                            <h5 class="modal-title">Reactivar — {{ $celular->marca }} {{ $celular->modelo }}</h5>
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -181,15 +185,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Fecha de reactivación</label>
-                                                <input type="date" name="fecha_reactivacion"
-                                                       class="form-control"
-                                                       value="{{ date('Y-m-d') }}" required>
+                                                <input type="date" name="fecha_reactivacion" class="form-control" value="{{ date('Y-m-d') }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Autorizó</label>
-                                                <input type="text" name="autorizo"
-                                                       class="form-control"
-                                                       placeholder="Nombre de quien autorizó" required>
+                                                <input type="text" name="autorizo" class="form-control" placeholder="Nombre de quien autorizó" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -231,26 +231,24 @@
                             <td>{{ $tablet->modelo }}</td>
                             <td>{{ $tablet->numero_serie }}</td>
                             <td>{{ $tablet->area->nombre ?? '—' }}</td>
-                            @role ('GerenteTIDS')
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm btn-success"
+                                @role('GerenteTIDS')
+                                <button type="button" class="btn btn-sm btn-success"
                                         data-toggle="modal"
                                         data-target="#modalTablet{{ $tablet->id }}">
                                     <i class="fas fa-redo"></i> Reactivar
                                 </button>
+                                @endrole
                             </td>
-                            @endrole
                         </tr>
 
-                        {{-- Modal reactivar tablet --}}
                         <div class="modal fade" id="modalTablet{{ $tablet->id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="{{ route('bajas.tablets.reactivar', $tablet->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Reactivar tablet — {{ $tablet->marca }} {{ $tablet->modelo }}</h5>
+                                            <h5 class="modal-title">Reactivar — {{ $tablet->marca }} {{ $tablet->modelo }}</h5>
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -266,15 +264,11 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Fecha de reactivación</label>
-                                                <input type="date" name="fecha_reactivacion"
-                                                       class="form-control"
-                                                       value="{{ date('Y-m-d') }}" required>
+                                                <input type="date" name="fecha_reactivacion" class="form-control" value="{{ date('Y-m-d') }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Autorizó</label>
-                                                <input type="text" name="autorizo"
-                                                       class="form-control"
-                                                       placeholder="Nombre de quien autorizó" required>
+                                                <input type="text" name="autorizo" class="form-control" placeholder="Nombre de quien autorizó" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -290,6 +284,164 @@
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">
                                 <i class="fas fa-check-circle text-success"></i> No hay tablets de baja.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- TAB CPUs --}}
+            <div class="tab-pane fade" id="cpus">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>No. Serie</th>
+                            <th>Área</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($cpus as $cpu)
+                        <tr>
+                            <td>{{ $cpu->marca }}</td>
+                            <td>{{ $cpu->modelo }}</td>
+                            <td>{{ $cpu->numero_serie }}</td>
+                            <td>{{ $cpu->area->nombre ?? '—' }}</td>
+                            <td>
+                                @role('GerenteTIDS|AnalistaTI')
+                                <button type="button" class="btn btn-sm btn-success"
+                                        data-toggle="modal"
+                                        data-target="#modalCpu{{ $cpu->id }}">
+                                    <i class="fas fa-redo"></i> Reactivar
+                                </button>
+                                @endrole
+                            </td>
+                        </tr>
+
+                        <div class="modal fade" id="modalCpu{{ $cpu->id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ route('bajas.componentes.reactivar', $cpu->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Reactivar CPU — {{ $cpu->marca }} {{ $cpu->modelo }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Tipo de reparación</label>
+                                                <select name="tipo_reparacion" class="form-control" required>
+                                                    <option value="">-- Selecciona --</option>
+                                                    <option value="reemplazo_pieza">Reemplazo de pieza</option>
+                                                    <option value="mantenimiento">Mantenimiento</option>
+                                                    <option value="limpieza">Limpieza</option>
+                                                    <option value="otro">Otro</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Fecha de reactivación</label>
+                                                <input type="date" name="fecha_reactivacion" class="form-control" value="{{ date('Y-m-d') }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Autorizó</label>
+                                                <input type="text" name="autorizo" class="form-control" placeholder="Nombre de quien autorizó" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success">Confirmar reactivación</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-check-circle text-success"></i> No hay CPUs de baja.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- TAB MONITORES --}}
+            <div class="tab-pane fade" id="monitores">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>No. Serie</th>
+                            <th>Área</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($monitores as $monitor)
+                        <tr>
+                            <td>{{ $monitor->marca }}</td>
+                            <td>{{ $monitor->modelo }}</td>
+                            <td>{{ $monitor->numero_serie }}</td>
+                            <td>{{ $monitor->area->nombre ?? '—' }}</td>
+                            <td>
+                                @role('GerenteTIDS|AnalistaTI')
+                                <button type="button" class="btn btn-sm btn-success"
+                                        data-toggle="modal"
+                                        data-target="#modalMonitor{{ $monitor->id }}">
+                                    <i class="fas fa-redo"></i> Reactivar
+                                </button>
+                                @endrole
+                            </td>
+                        </tr>
+
+                        <div class="modal fade" id="modalMonitor{{ $monitor->id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ route('bajas.componentes.reactivar', $monitor->id) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Reactivar Monitor — {{ $monitor->marca }} {{ $monitor->modelo }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Tipo de reparación</label>
+                                                <select name="tipo_reparacion" class="form-control" required>
+                                                    <option value="">-- Selecciona --</option>
+                                                    <option value="reemplazo_pieza">Reemplazo de pieza</option>
+                                                    <option value="mantenimiento">Mantenimiento</option>
+                                                    <option value="limpieza">Limpieza</option>
+                                                    <option value="otro">Otro</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Fecha de reactivación</label>
+                                                <input type="date" name="fecha_reactivacion" class="form-control" value="{{ date('Y-m-d') }}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Autorizó</label>
+                                                <input type="text" name="autorizo" class="form-control" placeholder="Nombre de quien autorizó" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success">Confirmar reactivación</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-check-circle text-success"></i> No hay monitores de baja.
                             </td>
                         </tr>
                         @endforelse

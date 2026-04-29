@@ -61,4 +61,31 @@ class PerifericoController extends Controller
         return redirect()->route('perifericos.index')
             ->with('success', 'Periférico actualizado correctamente.');
     }
+    public function destroy(Periferico $periferico)
+    {
+        if ($periferico->cantidad_disponible < $periferico->cantidad_total) {
+            return redirect()->route('perifericos.index')
+                ->with('error', 'No puedes dar de baja este periférico porque hay unidades en uso.');
+        }
+
+        $periferico->delete();
+
+        return redirect()->route('perifericos.index')
+            ->with('success', 'Periférico eliminado correctamente.');
+    }
+
+    public function darDeBaja(Request $request, Periferico $periferico)
+    {
+        $request->validate([
+            'cantidad_baja' => 'required|integer|min:1|max:' . $periferico->cantidad_disponible,
+        ]);
+
+        $periferico->update([
+            'cantidad_total'      => $periferico->cantidad_total - $request->cantidad_baja,
+            'cantidad_disponible' => $periferico->cantidad_disponible - $request->cantidad_baja,
+        ]);
+
+        return redirect()->route('perifericos.index')
+            ->with('success', $request->cantidad_baja . ' unidad(es) dada(s) de baja correctamente.');
+    }
 }

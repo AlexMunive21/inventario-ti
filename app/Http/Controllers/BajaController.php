@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Equipo;
 use App\Models\Celular;
 use App\Models\Tablet;
+use App\Models\Componente;
+use App\Models\Periferico;
 use App\Models\ReactivacionEquipo;
 use App\Models\ReactivacionCelular;
 use App\Models\ReactivacionTablet;
@@ -14,11 +16,20 @@ class BajaController extends Controller
 {
     public function index()
     {
-        $equipos   = Equipo::with('area')->where('estatus', 'baja')->get();
-        $celulares = Celular::with('area')->where('estatus', 'baja')->get();
-        $tablets   = Tablet::with('area')->where('estatus', 'baja')->get();
+        $equipos    = Equipo::with('area')->where('estatus', 'baja')->get();
+        $celulares  = Celular::with('area')->where('estatus', 'baja')->get();
+        $tablets    = Tablet::with('area')->where('estatus', 'baja')->get();
+        $cpus       = Componente::with('area')->where('tipo', 'cpu')->where('estatus', 'baja')->get();
+        $monitores  = Componente::with('area')->where('tipo', 'monitor')->where('estatus', 'baja')->get();
+        $perifericos = Periferico::with('area')
+            ->whereRaw('cantidad_total < cantidad_total + 1') // todos
+            ->where('cantidad_disponible', 0)
+            ->get();
 
-        return view('bajas.index', compact('equipos', 'celulares', 'tablets'));
+        return view('bajas.index', compact(
+            'equipos', 'celulares', 'tablets',
+            'cpus', 'monitores', 'perifericos'
+        ));
     }
 
     public function reactivarEquipo(Request $request, Equipo $equipo)
@@ -85,5 +96,19 @@ class BajaController extends Controller
 
         return redirect()->route('bajas.index')
             ->with('success', 'Tablet reactivada correctamente.');
+    }
+
+    public function reactivarComponente(Request $request, Componente $componente)
+    {
+        $request->validate([
+            'tipo_reparacion'    => 'required',
+            'fecha_reactivacion' => 'required|date',
+            'autorizo'           => 'required|string|max:255',
+        ]);
+
+        $componente->update(['estatus' => 'disponible']);
+
+        return redirect()->route('bajas.index')
+            ->with('success', ucfirst($componente->tipo) . ' reactivado correctamente.');
     }
 }

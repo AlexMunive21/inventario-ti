@@ -68,11 +68,35 @@ class ComponenteController extends Controller
             ->with('success', 'Componente actualizado correctamente.');
     }
 
+    // public function destroy(Componente $componente)
+    // {
+    //     $componente->update(['estatus' => 'baja']);
+
+    //     return redirect()->route('componentes.index')
+    //         ->with('success', 'Componente dado de baja correctamente.');
+    // }
+
+    // Nuevo — baja lógica con verificación de uso
     public function destroy(Componente $componente)
     {
+        // Verificar que no esté en uso
+        if ($componente->estatus === 'en_uso') {
+            return redirect()->route('componentes.index')
+                ->with('error', 'No puedes dar de baja un componente que está en uso. Cámbialo primero en el equipo.');
+        }
+
         $componente->update(['estatus' => 'baja']);
 
         return redirect()->route('componentes.index')
-            ->with('success', 'Componente dado de baja correctamente.');
+            ->with('success', ucfirst($componente->tipo) . ' dado de baja correctamente.');
+    }
+
+    // Nuevo — reactivar componente
+    public function reactivar(Componente $componente)
+    {
+        $componente->update(['estatus' => 'disponible']);
+
+        return redirect()->route('componentes.index')
+            ->with('success', ucfirst($componente->tipo) . ' reactivado correctamente.');
     }
 }
