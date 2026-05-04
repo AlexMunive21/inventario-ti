@@ -55,10 +55,10 @@
                                accept=".docx" required>
                         @error('archivo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         <small class="text-muted">
-                            Usa los placeholders: <code>{{Nombre}}</code> <code>{{ApellidoPaterno}}</code>
-                            <code>{{ApellidoMaterno}}</code> <code>{{Puesto}}</code>
-                            <code>{{MARCA}}</code> <code>{{MODELO}}</code> <code>{{SERIE}}</code>
-                            <code>{{Dia}}</code> <code>{{Mes}}</code> <code>{{Anio}}</code>
+                            Usa los placeholders: <code>@{{Nombre}}</code> <code>@{{ApellidoPaterno}}</code>
+                            <code>@{{ApellidoMaterno}}</code> <code>@{{Puesto}}</code>
+                            <code>@{{MARCA}}</code> <code>@{{MODELO}}</code> <code>@{{SERIE}}</code>
+                            <code>@{{Dia}}</code> <code>@{{Mes}}</code> <code>@{{Anio}}</code>
                         </small>
                     </div>
                 </div>

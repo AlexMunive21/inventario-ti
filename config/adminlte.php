@@ -567,6 +567,15 @@ return [
         'icon'  => 'fas fa-users-cog',
         'icon_color' => 'gray',
     ],
+    
+    [
+        'text'       => 'Templates',
+        'icon'       => 'fas fa-file-word',
+        'icon_color' => 'blue',
+        'route'      => 'templates.index',
+    ],
+
+
 ],
 
     /*

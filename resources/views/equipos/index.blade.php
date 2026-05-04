@@ -73,6 +73,12 @@
                             <i class="bi bi-file-earmark-text"></i>
                         </a>
 
+                        <a href="{{ route('equipos.pagare', $equipo->id) }}"
+                        class="btn btn-sm btn-dark"
+                        title="Pagaré">
+                            <i class="bi bi-receipt"></i>
+                        </a>
+
                         @role ('GerenteTIDS')
                         <form action="{{ route('equipos.destroy', $equipo) }}" 
                             method="POST" 

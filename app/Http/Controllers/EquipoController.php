@@ -151,4 +151,64 @@ class EquipoController extends Controller
 
         return response()->download($tempFile)->deleteFileAfterSend(true);
     }
+
+    //pagare
+    public function pagare(Equipo $equipo)
+    {
+        Carbon::setLocale('es');
+
+        $asignacion = $equipo->asignaciones()
+            ->where('activa',1)
+            ->with('colaborador')
+            ->first();
+
+        if(!$asignacion){
+            return back()->with('error','El equipo no tiene colaborador asignado');
+        }
+
+        $colaborador = $asignacion->colaborador;
+
+        $template = new TemplateProcessor(
+            storage_path('app/templates/pagare_template.docx')
+        );
+
+        $template->setValue('Dia', now()->format('d'));
+        $template->setValue('Mes', now()->translatedFormat('F'));
+        $template->setValue('Anio', now()->format('Y'));
+
+        $template->setValue('Nombre', $colaborador->nombre);
+        $template->setValue('ApellidoMaterno', $colaborador->apellido_materno);
+        $template->setValue('ApellidoPaterno', $colaborador->apellido_paterno);
+        $template->setValue('Puesto', $colaborador->puesto ?? 'N/A');
+
+        $template->setValue('TIPO', $equipo->tipo_equipo);
+        $template->setValue('MARCA', $equipo->marca);
+        $template->setValue('MODELO', $equipo->modelo);
+        $template->setValue('SERIE', $equipo->numero_serie);
+
+        // Folio de pagaré — solo si es tipo pagaré
+        if (in_array($equipo->tipo_equipo, ['laptop', 'tablet'])) {
+            $folio = \App\Models\FolioPagare::firstOrCreate(
+                ['asignacion_id' => $asignacion->id, 'tipo' => 'pagare_' . $equipo->tipo_equipo],
+                ['folio' => (\App\Models\FolioPagare::max('folio') ?? 0) + 1]
+            );
+            $template->setValue('FOLIO', str_pad($folio->folio, 6, '0', STR_PAD_LEFT));
+        } else {
+            return back()->with('error','Solo se generan pagarés para laptops y tablets.');
+        }
+
+        $fileName = "Pagare_".$equipo->numero_serie.".docx";
+
+        $tempPath = storage_path('app/temp');
+
+        if(!File::exists($tempPath)){
+            File::makeDirectory($tempPath, 0755, true);
+        }
+
+        $tempFile = $tempPath.'/'.$fileName;
+
+        $template->saveAs($tempFile);
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
 }

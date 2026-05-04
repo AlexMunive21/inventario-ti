@@ -7,6 +7,7 @@ use App\Models\AsignacionCelular;
 use App\Models\AsignacionTablet;
 use App\Models\AsignacionEscritorio;
 use App\Models\DocumentTemplate;
+use App\Models\FolioPagare;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -68,6 +69,15 @@ class DocumentoAsignacionController extends Controller
         $p->setValue('MARCA',  $equipo->marca);
         $p->setValue('MODELO', $equipo->modelo);
         $p->setValue('SERIE',  $equipo->numero_serie);
+
+        // Folio de pagaré — solo si es tipo pagaré
+        if (in_array($tipo, ['pagare_laptop', 'pagare_tablet'])) {
+            $folio = \App\Models\FolioPagare::firstOrCreate(
+                ['asignacion_id' => $asignacion->id, 'tipo' => $tipo],
+                ['folio' => (\App\Models\FolioPagare::max('folio') ?? 0) + 1]
+            );
+            $p->setValue('PAGARE_NUM', str_pad($folio->folio, 4, '0', STR_PAD_LEFT));
+        }
 
         return $this->descargarDocx($p, $tipo . '_' . $equipo->numero_serie . '.docx');
     }
@@ -177,7 +187,7 @@ class DocumentoAsignacionController extends Controller
 
     // ── Descargar PDF firmado ─────────────────────────────
 
-    private function descargarPdf($asignacion): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    private function descargarPdf($asignacion): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         if (!$asignacion->pdf_firmado) {
             abort(404, 'No hay PDF firmado para esta asignación.');

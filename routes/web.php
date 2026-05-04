@@ -234,6 +234,12 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     ->name('equipos-escritorio.destroy')
     ->middleware('role:GerenteTIDS');
 
+    //Pagaré — solo para laptops y tablets
+    Route::get('equipos/{equipo}/pagare', [EquipoController::class, 'pagare'])
+        ->name('equipos.pagare')
+        ->middleware('auth');
+    
+
 });
 
 require __DIR__.'/auth.php';
