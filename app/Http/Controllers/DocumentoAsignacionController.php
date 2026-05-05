@@ -158,7 +158,12 @@ class DocumentoAsignacionController extends Controller
         }
 
         $nombre = $prefijo . '_' . $asignacion->id . '_' . now()->format('Ymd_His') . '.pdf';
-        $request->file('pdf_firmado')->storeAs('documentos_firmados', $nombre);
+        // Después
+        $destino = storage_path('app/documentos_firmados');
+        if (!\Illuminate\Support\Facades\File::exists($destino)) {
+            \Illuminate\Support\Facades\File::makeDirectory($destino, 0755, true);
+        }
+        $request->file('pdf_firmado')->move($destino, $nombre);
 
         $asignacion->update(['pdf_firmado' => $nombre]);
 
@@ -187,12 +192,12 @@ class DocumentoAsignacionController extends Controller
 
     // ── Descargar PDF firmado ─────────────────────────────
 
-    private function descargarPdf($asignacion): \Symfony\Component\HttpFoundation\StreamedResponse
+    private function descargarPdf($asignacion): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         if (!$asignacion->pdf_firmado) {
             abort(404, 'No hay PDF firmado para esta asignación.');
         }
-        return Storage::download('documentos_firmados/' . $asignacion->pdf_firmado);
+        return response()->download(storage_path('app/documentos_firmados/' . $asignacion->pdf_firmado));
     }
 
     public function descargarPdfEquipo(Asignacion $asignacion)

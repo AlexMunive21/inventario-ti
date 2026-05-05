@@ -239,6 +239,11 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
         ->name('equipos.pagare')
         ->middleware('auth');
     
+    //Responsivas - Celulares
+    Route::get('celulares/{celular}/responsiva', [CelularController::class, 'responsiva'])
+        ->name('celulares.responsiva')
+        ->middleware('auth');
+    
 
 });
 

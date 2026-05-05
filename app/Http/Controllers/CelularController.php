@@ -6,6 +6,11 @@ use App\Models\Celular;
 use App\Models\Area;
 use App\Models\Ciudad;
 use Illuminate\Http\Request;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\TemplateProcessor;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class CelularController extends Controller
 {
@@ -96,4 +101,60 @@ class CelularController extends Controller
         return redirect()->route('celulares.index')
             ->with('success', 'Celular dado de baja correctamente.');
     }
+
+    public function responsiva(Celular $celular)
+{
+    Carbon::setLocale('es');
+
+    $asignacion = $celular->asignaciones()
+        ->whereNull('fecha_devolucion')
+        ->with('colaborador')
+        ->first();
+
+    if (!$asignacion) {
+        return back()->with('error', 'El equipo no tiene colaborador asignado.');
+    }
+
+    // Usar el sistema de templates
+    $template = \App\Models\DocumentTemplate::where('tipo', 'responsiva_celular')
+        ->latest()->first();
+
+    if (!$template) {
+        return back()->with('error', 'No hay template de responsiva subido. Ve a Templates y súbelo primero.');
+    }
+
+    // Ruta correcta
+    $rutaTemplate = storage_path('app/templates/' . $template->archivo);
+
+    if (!\Illuminate\Support\Facades\File::exists($rutaTemplate)) {
+        return back()->with('error', 'El archivo del template no existe. Vuelve a subirlo en Templates.');
+    }
+
+    $colaborador = $asignacion->colaborador;
+    $t = new TemplateProcessor($rutaTemplate);
+
+    $t->setValue('Dia',             now()->format('d'));
+    $t->setValue('Mes',             now()->translatedFormat('F'));
+    $t->setValue('Anio',            now()->format('Y'));
+    $t->setValue('Nombre',          $colaborador->nombre);
+    $t->setValue('ApellidoMaterno', $colaborador->apellido_materno ?? '');
+    $t->setValue('ApellidoPaterno', $colaborador->apellido_paterno);
+    $t->setValue('Puesto',          $colaborador->puesto ?? 'N/A');
+    $t->setValue('TIPO',            $celular->tipo_equipo);
+    $t->setValue('MARCA',           $celular->marca);
+    $t->setValue('MODELO',          $celular->modelo);
+    $t->setValue('IMEI',           $celular->imei);
+    $t->setValue('NUMERO',         $celular->numero_telefono ?? 'N/A');
+
+    $tempPath = storage_path('app/temp');
+    if (!File::exists($tempPath)) {
+        File::makeDirectory($tempPath, 0755, true);
+    }
+
+    $fileName = 'Responsiva_' . $celular->imei . '.docx';
+    $tempFile = $tempPath . '/' . $fileName;
+    $t->saveAs($tempFile);
+
+    return response()->download($tempFile)->deleteFileAfterSend(true);
+}
 }

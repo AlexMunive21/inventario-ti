@@ -63,8 +63,14 @@
                             <td>
                                 <a href="{{ route('celulares.edit', $celular) }}"
                                    class="btn btn-sm btn-warning">
-                                    Editar
+                                    <i class="fas fa-edit"></i>
                                 </a>
+                                {{-- Ver responsiva Solo si está asignado --}}
+                                @if($celular->estatus == 'asignado')
+                                    <a href="{{ route('celulares.responsiva', $celular) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-file-alt"></i>
+                                    </a>
+                                @endif
 
                                 @role ('GerenteTIDS')
 
@@ -76,7 +82,7 @@
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-danger"
                                                 onclick="return confirm('¿Seguro que deseas dar de baja este celular?')">
-                                            Baja
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 @endif

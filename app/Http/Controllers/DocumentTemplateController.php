@@ -29,7 +29,12 @@ class DocumentTemplateController extends Controller
         ]);
 
         $nombre = $request->tipo . '_' . now()->format('Ymd_His') . '.docx';
-        $request->file('archivo')->storeAs('templates', $nombre);
+        // Después — ruta absoluta explícita
+        $destino = storage_path('app/templates');
+        if (!\Illuminate\Support\Facades\File::exists($destino)) {
+            \Illuminate\Support\Facades\File::makeDirectory($destino, 0755, true);
+        }
+        $request->file('archivo')->move($destino, $nombre);
 
         DocumentTemplate::create([
             'nombre'  => $request->nombre,
@@ -44,7 +49,7 @@ class DocumentTemplateController extends Controller
 
     public function destroy(DocumentTemplate $template)
     {
-        Storage::delete('templates/' . $template->archivo);
+        \Illuminate\Support\Facades\File::delete(storage_path('app/templates/' . $template->archivo));
         $template->delete();
 
         return redirect()->route('templates.index')
