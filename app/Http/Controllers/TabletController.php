@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Tablet;
 use App\Models\Area;
 use App\Models\Ciudad;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PhpOffice\PhpWord\TemplateProcessor;
+use Illuminate\Support\Facades\File;
 
 class TabletController extends Controller
 {
@@ -90,4 +93,117 @@ class TabletController extends Controller
         $tablet->load('asignaciones.colaborador');
         return view('tablets.show', compact('tablet'));
     }
+
+ public function responsiva(Tablet $tablet)
+{
+    Carbon::setLocale('es');
+
+    // ✅ Faltaba .first()
+    $asignacion = $tablet->asignaciones()
+        ->whereNull('fecha_devolucion')
+        ->with('colaborador')
+        ->first();
+
+    if (!$asignacion) {
+        return back()->with('error', 'La tablet no tiene colaborador asignado.');
+    }
+
+    $template = \App\Models\DocumentTemplate::where('tipo', 'responsiva_tablet')
+        ->latest()->first();
+
+    if (!$template) {
+        return back()->with('error', 'No hay template de responsiva subido. Ve a Templates y súbelo primero.');
+    }
+
+    $rutaTemplate = storage_path('app/templates/' . $template->archivo);
+
+    if (!File::exists($rutaTemplate)) {
+        return back()->with('error', 'El archivo del template no existe. Vuelve a subirlo en Templates.');
+    }
+
+    $colaborador = $asignacion->colaborador;
+    $t = new TemplateProcessor($rutaTemplate);
+
+    $t->setValue('Dia',             now()->format('d'));
+    $t->setValue('Mes',             now()->translatedFormat('F'));
+    $t->setValue('Anio',            now()->format('Y'));
+    $t->setValue('Nombre',          $colaborador->nombre);
+    $t->setValue('ApellidoMaterno', $colaborador->apellido_materno ?? '');
+    $t->setValue('ApellidoPaterno', $colaborador->apellido_paterno);
+    $t->setValue('Puesto',          $colaborador->puesto ?? 'N/A');
+    $t->setValue('MARCA',           $tablet->marca);
+    $t->setValue('MODELO',          $tablet->modelo);
+    $t->setValue('SERIE',           $tablet->numero_serie);
+
+    $tempPath = storage_path('app/temp');
+    if (!File::exists($tempPath)) {
+        File::makeDirectory($tempPath, 0755, true);
+    }
+
+    $fileName = 'Responsiva_' . $tablet->numero_serie . '.docx';
+    $tempFile = $tempPath . '/' . $fileName;
+    $t->saveAs($tempFile);
+
+    return response()->download($tempFile)->deleteFileAfterSend(true);
+}
+
+public function pagare(Tablet $tablet)
+{
+    Carbon::setLocale('es');
+
+    // ✅ Faltaba .first()
+    $asignacion = $tablet->asignaciones()
+        ->whereNull('fecha_devolucion')
+        ->with('colaborador')
+        ->first();
+
+    if (!$asignacion) {
+        return back()->with('error', 'La tablet no tiene colaborador asignado.');
+    }
+
+    $template = \App\Models\DocumentTemplate::where('tipo', 'pagare_tablet')
+        ->latest()->first();
+
+    if (!$template) {
+        return back()->with('error', 'No hay template de pagaré subido. Ve a Templates y súbelo primero.');
+    }
+
+    $rutaTemplate = storage_path('app/templates/' . $template->archivo);
+
+    if (!File::exists($rutaTemplate)) {
+        return back()->with('error', 'El archivo del template no existe. Vuelve a subirlo en Templates.');
+    }
+
+    $colaborador = $asignacion->colaborador;
+    $t = new TemplateProcessor($rutaTemplate);
+
+    $t->setValue('Dia',             now()->format('d'));
+    $t->setValue('Mes',             now()->translatedFormat('F'));
+    $t->setValue('Anio',            now()->format('Y'));
+    $t->setValue('Nombre',          $colaborador->nombre);
+    $t->setValue('ApellidoMaterno', $colaborador->apellido_materno ?? '');
+    $t->setValue('ApellidoPaterno', $colaborador->apellido_paterno);
+    $t->setValue('Puesto',          $colaborador->puesto ?? 'N/A');
+    $t->setValue('MARCA',           $tablet->marca);
+    $t->setValue('MODELO',          $tablet->modelo);
+    $t->setValue('SERIE',           $tablet->numero_serie);
+
+    // ✅ Tipo correcto pagare_tablet
+    $folio = \App\Models\FolioPagare::firstOrCreate(
+        ['asignacion_id' => $asignacion->id, 'tipo' => 'pagare_tablet'],
+        ['folio' => (\App\Models\FolioPagare::max('folio') ?? 0) + 1]
+    );
+    $t->setValue('PAGARE_NUM', str_pad($folio->folio, 4, '0', STR_PAD_LEFT));
+
+    $tempPath = storage_path('app/temp');
+    if (!File::exists($tempPath)) {
+        File::makeDirectory($tempPath, 0755, true);
+    }
+
+    $fileName = 'Pagare_' . $tablet->numero_serie . '.docx';
+    $tempFile = $tempPath . '/' . $fileName;
+    $t->saveAs($tempFile);
+
+    return response()->download($tempFile)->deleteFileAfterSend(true);
+}
 }

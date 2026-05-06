@@ -88,13 +88,6 @@ Celular Asignado
 {{ $celular->imei }}
 </p>
 
-<a href="{{ asset('storage/responsivas/'.$celular->responsiva) }}"
-class="btn btn-danger">
-
-Descargar Responsiva PDF
-
-</a>
-
 @else
 
 <span class="badge bg-secondary">

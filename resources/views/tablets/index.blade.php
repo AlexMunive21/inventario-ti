@@ -26,7 +26,6 @@
         <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
 @endif
-
 <div class="card">
     <div class="card-body table-responsive p-0">
         <table class="table table-bordered table-striped table-hover">
@@ -69,6 +68,21 @@
                            class="btn btn-sm btn-warning" title="Editar">
                             <i class="fas fa-edit"></i>
                         </a>
+
+                        {{-- Ver responsiva Solo si está asignado --}}
+                        @if($tablet->asignaciones->whereNull('fecha_devolucion')->first())
+                            <a href="{{ route('tablets.responsiva', $tablet) }}" class="btn btn-sm btn-success" title="Responsiva">
+                                <i class="fas fa-file-alt"></i>
+                            </a>
+                        @endif
+                        {{-- Pagaré Solo si está asignado --}}
+                        @if($tablet->asignaciones->whereNull('fecha_devolucion')->first())
+                            <a href="{{ route('tablets.pagare', $tablet) }}" class="btn btn-sm btn-primary" title="Pagaré">
+                                <i class="fas fa-file-invoice"></i>
+                            </a>
+                        @endif
+
+                        {{-- Dar de baja Solo para GerenteTIDS --}}
                         @role('GerenteTIDS')
                         <form action="{{ route('tablets.destroy', $tablet) }}"
                               method="POST" style="display:inline;">

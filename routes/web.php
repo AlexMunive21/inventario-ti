@@ -243,7 +243,15 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     Route::get('celulares/{celular}/responsiva', [CelularController::class, 'responsiva'])
         ->name('celulares.responsiva')
         ->middleware('auth');
-    
+
+    //Responsivas - Tablets
+    Route::get('tablets/{tablet}/responsiva', [TabletController::class, 'responsiva'])
+        ->name('tablets.responsiva')
+        ->middleware('auth');
+    //Pagare - Tablets
+    Route::get('tablets/{tablet}/pagare', [TabletController::class, 'pagare'])
+        ->name('tablets.pagare')
+        ->middleware('auth');
 
 });
 
