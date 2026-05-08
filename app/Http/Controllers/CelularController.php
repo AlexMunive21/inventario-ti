@@ -50,6 +50,7 @@ class CelularController extends Controller
 
     public function show(Celular $celular)
     {
+        $celular->load(['area', 'ciudad', 'asignaciones.colaborador']);
         return view('celulares.show', compact('celular'));
     }
 

@@ -17,7 +17,10 @@ class Equipo extends Model
         'modelo',
         'numero_serie',
         'estatus',
-        'observaciones'
+        'observaciones',
+        'nombre_equipo',
+        'correo',
+        'estado',
     ];
 
     // Relaciones

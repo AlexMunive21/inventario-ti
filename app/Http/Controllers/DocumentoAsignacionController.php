@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class DocumentoAsignacionController extends Controller
 {
@@ -219,4 +221,139 @@ class DocumentoAsignacionController extends Controller
     {
         return $this->descargarPdf($asignacion);
     }
+
+    // ── Subir PDF de pagaré ───────────────────────
+
+    public function subirPdfPagareEquipo(Request $request, Asignacion $asignacion)
+    {
+        $request->validate(['pdf_pagare' => 'required|file|mimes:pdf|max:10240']);
+
+        if ($asignacion->pdf_pagare) {
+            Storage::delete('documentos_firmados/' . $asignacion->pdf_pagare);
+        }
+
+        $nombre = 'pagare_equipo_' . $asignacion->id . '_' . now()->format('Ymd_His') . '.pdf';
+        $request->file('pdf_pagare')->move(storage_path('app/documentos_firmados'), $nombre);
+
+        $asignacion->update(['pdf_pagare' => $nombre]);
+
+        return redirect()->back()->with('success', 'PDF de pagaré subido correctamente.');
+    }
+
+    public function subirPdfPagareTablet(Request $request, AsignacionTablet $asignacion)
+    {
+        $request->validate(['pdf_pagare' => 'required|file|mimes:pdf|max:10240']);
+
+        if ($asignacion->pdf_pagare) {
+            Storage::delete('documentos_firmados/' . $asignacion->pdf_pagare);
+        }
+
+        $nombre = 'pagare_tablet_' . $asignacion->id . '_' . now()->format('Ymd_His') . '.pdf';
+        $request->file('pdf_pagare')->move(storage_path('app/documentos_firmados'), $nombre);
+
+        $asignacion->update(['pdf_pagare' => $nombre]);
+
+        return redirect()->back()->with('success', 'PDF de pagaré subido correctamente.');
+    }
+
+    // ── Descargar PDF de pagaré ──────────────────
+
+    public function descargarPdfPagareEquipo(Asignacion $asignacion)
+    {
+        if (!$asignacion->pdf_pagare) abort(404);
+        return response()->download(storage_path('app/documentos_firmados/' . $asignacion->pdf_pagare));
+    }
+
+    public function descargarPdfPagareTablet(AsignacionTablet $asignacion)
+    {
+        if (!$asignacion->pdf_pagare) abort(404);
+        return response()->download(storage_path('app/documentos_firmados/' . $asignacion->pdf_pagare));
+    }
+
+public function generarFichaTecnica(Asignacion $asignacion)
+{
+    $template = $this->getTemplate('ficha_tecnica');
+    if (!$template) {
+        return back()->with('error', 'No hay template de ficha técnica subido. Ve a Templates.');
+    }
+
+    $rutaTemplate = storage_path('app/templates/' . $template->archivo);
+    if (!File::exists($rutaTemplate)) {
+        return back()->with('error', 'El archivo del template no existe. Vuelve a subirlo.');
+    }
+
+    $colaborador = $asignacion->colaborador;
+    $equipo      = $asignacion->equipo;
+
+    // Periféricos si es escritorio armado
+    $teclado   = null;
+    $mouse     = null;
+    $monitores = '—';
+
+    $escritorio = \App\Models\EquipoEscritorio::where('cpu_id', $equipo->id)->first();
+    if ($escritorio) {
+        $teclado   = $escritorio->perifericos->where('tipo', 'teclado')->first();
+        $mouse     = $escritorio->perifericos->where('tipo', 'mouse')->first();
+        $monitores = $escritorio->monitores
+            ->map(fn($m) => $m->marca . ' ' . $m->modelo . ' — ' . $m->numero_serie)
+            ->implode(' | ');
+    }
+
+    // Mapa de reemplazos
+    $reemplazos = [
+        '${MARCA}'             => $equipo->marca,
+        '${MODELO}'            => $equipo->modelo,
+        '${SERIE}'             => $equipo->numero_serie,
+        '${NombreEquipo}'      => $equipo->nombre_equipo ?? 'N/A',
+        '${Correo}'            => $equipo->correo ?? $colaborador->correo ?? 'N/A',
+        '${Estado}'            => $equipo->estado ?? 'N/A',
+        '${MarcaTPeriferico}'  => $teclado ? $teclado->marca  : 'N/A',
+        '${ModeloTPeriferico}' => $teclado ? $teclado->modelo : 'N/A',
+        '${MarcaMPeriferico}'  => $mouse   ? $mouse->marca    : 'N/A',
+        '${ModeloMPeriferico}' => $mouse   ? $mouse->modelo   : 'N/A',
+        '${Nombre}'            => $colaborador->nombre,
+        '${ApellidoPaterno}'   => $colaborador->apellido_paterno,
+        '${ApellidoMaterno}'   => $colaborador->apellido_materno ?? '',
+        '${Puesto}'            => $colaborador->puesto ?? 'N/A',
+        '${Area}'              => $colaborador->area->nombre ?? 'N/A',
+        '${Ciudad}'            => $colaborador->ciudad->nombre ?? 'N/A',
+        '${Monitores}'         => $monitores,
+    ];
+
+    // Cargar el Excel template
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($rutaTemplate);
+
+    // Reemplazar en todas las hojas
+    foreach ($spreadsheet->getAllSheets() as $sheet) {
+        foreach ($sheet->getRowIterator() as $row) {
+            foreach ($row->getCellIterator() as $cell) {
+                $valor = $cell->getValue();
+                if (is_string($valor)) {
+                    $nuevoValor = str_replace(
+                        array_keys($reemplazos),
+                        array_values($reemplazos),
+                        $valor
+                    );
+                    if ($nuevoValor !== $valor) {
+                        $cell->setValue($nuevoValor);
+                    }
+                }
+            }
+        }
+    }
+
+    // Guardar en temp y descargar
+    $tempPath = storage_path('app/temp');
+    if (!File::exists($tempPath)) {
+        File::makeDirectory($tempPath, 0755, true);
+    }
+
+    $fileName = 'FichaTecnica_' . $equipo->numero_serie . '.xlsx';
+    $tempFile = $tempPath . '/' . $fileName;
+
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $writer->save($tempFile);
+
+    return response()->download($tempFile)->deleteFileAfterSend(true);
+}
 }

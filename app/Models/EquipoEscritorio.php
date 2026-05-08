@@ -45,16 +45,6 @@ class EquipoEscritorio extends Model
         )->withPivot('cantidad');
     }
 
-    public function area()
-    {
-        return $this->belongsTo(Area::class);
-    }
-
-    public function ciudad()
-    {
-        return $this->belongsTo(Ciudad::class);
-    }
-
     public function asignaciones()
     {
         return $this->hasMany(AsignacionEscritorio::class);

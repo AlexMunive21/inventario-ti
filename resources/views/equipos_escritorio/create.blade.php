@@ -32,7 +32,7 @@
                                value="{{ old('nombre') }}" required>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <!-- <div class="col-md-3">
                     <div class="form-group">
                         <label>Área</label>
                         <select name="area_id" class="form-control" required>
@@ -57,7 +57,7 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <hr>

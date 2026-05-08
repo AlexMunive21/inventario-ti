@@ -28,8 +28,8 @@
                     <th>Nombre</th>
                     <th>CPU</th>
                     <th>Monitores</th>
-                    <th>Área</th>
-                    <th>Ciudad</th>
+                    <!-- <th>Área</th>
+                    <th>Ciudad</th> -->
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tr>
@@ -53,8 +53,8 @@
                             </span>
                         @endforeach
                     </td>
-                    <td>{{ $equipo->area->nombre ?? '—' }}</td>
-                    <td>{{ $equipo->ciudad->nombre ?? '—' }}</td>
+                    <!-- <td>{{ $equipo->area->nombre ?? '—' }}</td>
+                    <td>{{ $equipo->ciudad->nombre ?? '—' }}</td> -->
                     <td>
                         @php
                             $badge = ['disponible'=>'success','asignado'=>'primary','mantenimiento'=>'warning','baja'=>'danger'][$equipo->estatus] ?? 'secondary';

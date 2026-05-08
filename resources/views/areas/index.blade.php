@@ -17,7 +17,7 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Nombre</th>
+            <th>Área | Departamento</th>
             <th>Descripción</th>
             <th>Activo</th>
             <th>Acciones</th>

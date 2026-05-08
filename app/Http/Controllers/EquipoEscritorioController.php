@@ -16,79 +16,70 @@ class EquipoEscritorioController extends Controller
 {
     public function index()
     {
-        $equipos = EquipoEscritorio::with(['cpu', 'monitores', 'perifericos', 'area', 'ciudad'])
+        $equipos = EquipoEscritorio::with(['cpu', 'monitores', 'perifericos'])
             ->get();
 
         return view('equipos_escritorio.index', compact('equipos'));
     }
 
-    public function create()
-    {
-        $cpus      = Componente::where('tipo', 'cpu')->where('estatus', 'disponible')->get();
-        $monitores = Componente::where('tipo', 'monitor')->where('estatus', 'disponible')->get();
-        $teclados  = Periferico::where('tipo', 'teclado')->where('cantidad_disponible', '>', 0)->get();
-        $mouses    = Periferico::where('tipo', 'mouse')->where('cantidad_disponible', '>', 0)->get();
-        $areas     = Area::where('activo', 1)->get();
-        $ciudades  = Ciudad::where('activo', 1)->get();
+public function create()
+{
+    $cpus      = Componente::where('tipo', 'cpu')->where('estatus', 'disponible')->get();
+    $monitores = Componente::where('tipo', 'monitor')->where('estatus', 'disponible')->get();
+    $teclados  = Periferico::where('tipo', 'teclado')->where('cantidad_disponible', '>', 0)->get();
+    $mouses    = Periferico::where('tipo', 'mouse')->where('cantidad_disponible', '>', 0)->get();
 
-        return view('equipos_escritorio.create', compact(
-            'cpus', 'monitores', 'teclados', 'mouses', 'areas', 'ciudades'
-        ));
-    }
+    // Sin áreas ni ciudades
+    return view('equipos_escritorio.create', compact(
+        'cpus', 'monitores', 'teclados', 'mouses'
+    ));
+}
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'cpu_id'        => 'required|exists:componentes,id',
-            'monitores'     => 'required|array|min:1',
-            'monitores.*'   => 'exists:componentes,id',
-            'teclado_id'    => 'required|exists:perifericos,id',
-            'mouse_id'      => 'required|exists:perifericos,id',
-            'area_id'       => 'required|exists:areas,id',
-            'ciudad_id'     => 'required|exists:ciudades,id',
+public function store(Request $request)
+{
+    $request->validate([
+        'nombre'      => 'required|string|max:255',
+        'cpu_id'      => 'required|exists:componentes,id',
+        'monitores'   => 'required|array|min:1',
+        'monitores.*' => 'exists:componentes,id',
+        'teclado_id'  => 'required|exists:perifericos,id',
+        'mouse_id'    => 'required|exists:perifericos,id',
+        // Sin area_id ni ciudad_id
+    ]);
+
+    DB::transaction(function () use ($request) {
+        $equipo = EquipoEscritorio::create([
+            'nombre'        => $request->nombre,
+            'cpu_id'        => $request->cpu_id,
+            'estatus'       => 'disponible',
+            'observaciones' => $request->observaciones,
+            // Sin area_id ni ciudad_id
         ]);
 
-        DB::transaction(function () use ($request) {
-            // Crear el equipo
-            $equipo = EquipoEscritorio::create([
-                'nombre'    => $request->nombre,
-                'cpu_id'    => $request->cpu_id,
-                'area_id'   => $request->area_id,
-                'ciudad_id' => $request->ciudad_id,
-                'estatus'   => 'disponible',
-                'observaciones' => $request->observaciones,
-            ]);
+        $equipo->monitores()->attach($request->monitores);
 
-            // Asociar monitores
-            $equipo->monitores()->attach($request->monitores);
+        $equipo->perifericos()->attach([
+            $request->teclado_id => ['cantidad' => 1],
+            $request->mouse_id   => ['cantidad' => 1],
+        ]);
 
-            // Asociar teclado y mouse
-            $equipo->perifericos()->attach([
-                $request->teclado_id => ['cantidad' => 1],
-                $request->mouse_id   => ['cantidad' => 1],
-            ]);
+        Componente::whereIn('id', array_merge(
+            [$request->cpu_id],
+            $request->monitores
+        ))->update(['estatus' => 'en_uso']);
 
-            // Marcar componentes como en_uso
-            Componente::whereIn('id', array_merge(
-                [$request->cpu_id],
-                $request->monitores
-            ))->update(['estatus' => 'en_uso']);
+        Periferico::find($request->teclado_id)->decrement('cantidad_disponible');
+        Periferico::find($request->mouse_id)->decrement('cantidad_disponible');
+    });
 
-            // Reducir disponibles de periféricos
-            Periferico::find($request->teclado_id)->decrement('cantidad_disponible');
-            Periferico::find($request->mouse_id)->decrement('cantidad_disponible');
-        });
-
-        return redirect()->route('equipos-escritorio.index')
-            ->with('success', 'Equipo de escritorio armado correctamente.');
-    }
+    return redirect()->route('equipos-escritorio.index')
+        ->with('success', 'Equipo de escritorio armado correctamente.');
+}
 
     public function show(EquipoEscritorio $equipoEscritorio)
     {
         $equipoEscritorio->load([
             'cpu', 'monitores', 'perifericos',
-            'area', 'ciudad',
             'asignaciones.colaborador'
         ]);
 
@@ -199,7 +190,6 @@ class EquipoEscritorioController extends Controller
     }
     public function destroy(EquipoEscritorio $equipoEscritorio)
     {
-        // Verificar si tiene asignación activa
         $tieneAsignacion = $equipoEscritorio->asignaciones()
             ->where('activa', 1)
             ->exists();
@@ -214,9 +204,16 @@ class EquipoEscritorioController extends Controller
                 ->with('error', 'Este equipo ya está dado de baja.');
         }
 
-        // Liberar componentes al dar de baja
-        $equipoEscritorio->cpu()->update(['estatus' => 'disponible']);
-        $equipoEscritorio->monitores()->update(['estatus' => 'disponible']);
+        // Corregido — busca el CPU por ID directamente
+        $cpu = Componente::find($equipoEscritorio->cpu_id);
+        if ($cpu) {
+            $cpu->update(['estatus' => 'disponible']);
+        }
+
+        // Monitores — esto sí funciona con la relación many-to-many
+        foreach ($equipoEscritorio->monitores as $monitor) {
+            $monitor->update(['estatus' => 'disponible']);
+        }
 
         // Devolver periféricos
         foreach ($equipoEscritorio->perifericos as $periferico) {

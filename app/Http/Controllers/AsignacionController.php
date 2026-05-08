@@ -31,12 +31,11 @@ class AsignacionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'equipo_id' => 'required|exists:equipos,id',
-            'colaborador_id' => 'required|exists:colaboradores,id',
+            'equipo_id'        => 'required|exists:equipos,id',
+            'colaborador_id'   => 'required|exists:colaboradores,id',
             'fecha_asignacion' => 'required|date',
         ]);
 
-        // NUEVO — transacción con bloqueo pesimista
         DB::transaction(function () use ($request) {
             $equipo = Equipo::lockForUpdate()->findOrFail($request->equipo_id);
 
@@ -44,12 +43,21 @@ class AsignacionController extends Controller
                 throw new \Exception('El equipo ya no está disponible.');
             }
 
+            // Nuevo — verifica doble asignación al colaborador
+            $yaAsignado = Asignacion::where('colaborador_id', $request->colaborador_id)
+                ->where('activa', 1)
+                ->exists();
+
+            if ($yaAsignado) {
+                throw new \Exception('Este colaborador ya tiene un equipo de cómputo asignado.');
+            }
+
             Asignacion::create([
-                'equipo_id' => $request->equipo_id,
-                'colaborador_id' => $request->colaborador_id,
+                'equipo_id'        => $request->equipo_id,
+                'colaborador_id'   => $request->colaborador_id,
                 'fecha_asignacion' => $request->fecha_asignacion,
-                'observaciones' => $request->observaciones,
-                'activa' => 1
+                'observaciones'    => $request->observaciones,
+                'activa'           => 1,
             ]);
 
             $equipo->estatus = 'asignado';
@@ -57,7 +65,7 @@ class AsignacionController extends Controller
         });
 
         return redirect()->route('asignaciones.index')
-            ->with('success', 'Equipo asignado correctamente');
+            ->with('success', 'Equipo asignado correctamente.');
     }
 
     public function destroy(Request $request, $id)

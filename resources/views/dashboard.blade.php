@@ -142,6 +142,29 @@
 </div>
 @endrole
 
+{{-- ── PC ESCRITORIO ── --}}
+<h5 class="text-muted mb-2"><i class="fas fa-desktop mr-1"></i> PC Escritorio</h5>
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner"><h3>{{ $escritoriosDisponibles }}</h3><p>Disponibles</p></div>
+            <div class="icon"><i class="fas fa-desktop"></i></div>
+            <a href="{{ route('equipos-escritorio.index') }}" class="small-box-footer">
+                Ver equipos <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-primary">
+            <div class="inner"><h3>{{ $escritoriosAsignados }}</h3><p>Asignados</p></div>
+            <div class="icon"><i class="fas fa-user-check"></i></div>
+            <a href="{{ route('equipos-escritorio.index') }}" class="small-box-footer">
+                Ver equipos <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
 {{-- ── COLABORADORES — todos los roles ── --}}
 <h5 class="text-muted mb-2"><i class="fas fa-users mr-1"></i> Colaboradores</h5>
 <div class="row">

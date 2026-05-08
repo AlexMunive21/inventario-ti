@@ -16,7 +16,7 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>Ciudades</th>
             <th>Estado</th>
             <th>Activo</th>
             <th>Acciones</th>

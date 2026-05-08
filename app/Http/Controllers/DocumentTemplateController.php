@@ -20,32 +20,35 @@ class DocumentTemplateController extends Controller
         return view('templates.index', compact('templates', 'etiquetas'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre'  => 'required|string|max:255',
-            'tipo'    => 'required|in:responsiva_equipo,responsiva_celular,responsiva_tablet,pagare_laptop,pagare_tablet,ficha_tecnica',
-            'archivo' => 'required|file|max:5120',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'nombre'  => 'required|string|max:255',
+        'tipo'    => 'required|in:responsiva_equipo,responsiva_celular,responsiva_tablet,pagare_laptop,pagare_tablet,ficha_tecnica',
+        'archivo' => 'required|file|mimes:docx,xlsx|max:5120',
+    ]);
 
-        $nombre = $request->tipo . '_' . now()->format('Ymd_His') . '.docx';
-        // Después — ruta absoluta explícita
-        $destino = storage_path('app/templates');
-        if (!\Illuminate\Support\Facades\File::exists($destino)) {
-            \Illuminate\Support\Facades\File::makeDirectory($destino, 0755, true);
-        }
-        $request->file('archivo')->move($destino, $nombre);
+    // Usa la extensión real del archivo
+    $extension = $request->file('archivo')->getClientOriginalExtension();
+    $nombre    = $request->tipo . '_' . now()->format('Ymd_His') . '.' . $extension;
 
-        DocumentTemplate::create([
-            'nombre'  => $request->nombre,
-            'tipo'    => $request->tipo,
-            'archivo' => $nombre,
-            'user_id' => auth()->id(),
-        ]);
-
-        return redirect()->route('templates.index')
-            ->with('success', 'Template subido correctamente.');
+    $destino = storage_path('app/templates');
+    if (!\Illuminate\Support\Facades\File::exists($destino)) {
+        \Illuminate\Support\Facades\File::makeDirectory($destino, 0755, true);
     }
+
+    $request->file('archivo')->move($destino, $nombre);
+
+    DocumentTemplate::create([
+        'nombre'  => $request->nombre,
+        'tipo'    => $request->tipo,
+        'archivo' => $nombre,
+        'user_id' => auth()->id(),
+    ]);
+
+    return redirect()->route('templates.index')
+        ->with('success', 'Template subido correctamente.');
+}
 
     public function destroy(DocumentTemplate $template)
     {

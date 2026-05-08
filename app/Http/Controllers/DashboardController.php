@@ -13,6 +13,9 @@ use App\Models\AsignacionTablet;
 use App\Models\Account;
 use App\Models\DocumentTemplate;
 use Carbon\Carbon;
+use App\Models\EquipoEscritorio;
+use App\Models\AsignacionEscritorio;
+
 
 class DashboardController extends Controller
 {
@@ -74,6 +77,10 @@ class DashboardController extends Controller
                 ->count();
         }
 
+        // ── Escritorios ───────────────────────────────
+        $escritoriosDisponibles = EquipoEscritorio::where('estatus', 'disponible')->count();
+        $escritoriosAsignados   = EquipoEscritorio::where('estatus', 'asignado')->count();
+
         // ── PDFs pendientes de firma ───────────────────
         $pdfsPendientes = Asignacion::where('activa', 1)->whereNull('pdf_firmado')->count()
             + AsignacionCelular::whereNull('fecha_devolucion')->whereNull('pdf_firmado')->count()
@@ -88,6 +95,7 @@ class DashboardController extends Controller
             'totalCuentas', 'totalTemplates', 'tiposSinTemplate',
             'asignacionesRecientes',
             'meses', 'bajasMensuales',
+            'escritoriosDisponibles', 'escritoriosAsignados',
             'pdfsPendientes'
         ));
     }

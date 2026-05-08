@@ -46,6 +46,7 @@
                     <th>Fecha de baja</th>
                     <th>Último equipo</th>
                     <th>Último celular</th>
+                    <th>Último escritorio</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -88,6 +89,17 @@
                                 <strong>{{ $col->ultimo_celular->celular->marca }}</strong>
                                 {{ $col->ultimo_celular->celular->modelo }}<br>
                                 <span class="text-muted">IMEI: {{ $col->ultimo_celular->celular->imei }}</span>
+                            </small>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($col->ultimo_escritorio && $col->ultimo_escritorio->equipoEscritorio)
+                            <small>
+                                <strong>{{ $col->ultimo_escritorio->equipoEscritorio->cpu->marca }}</strong>
+                                {{ $col->ultimo_escritorio->equipoEscritorio->cpu->modelo }}<br>
+                                <span class="text-muted">Serie: {{ $col->ultimo_escritorio->equipoEscritorio->cpu->numero_serie }}</span>
                             </small>
                         @else
                             <span class="text-muted">—</span>

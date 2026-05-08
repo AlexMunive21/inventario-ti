@@ -17,6 +17,7 @@ class Asignacion extends Model
         'observaciones_devolucion',
         'activa',
         'pdf_firmado',
+        'pdf_pagare',
     ];
 
     public function equipo()

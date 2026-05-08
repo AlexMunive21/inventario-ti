@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\AsignacionEscritorio;
 
 class Colaborador extends Model
 {
@@ -57,6 +58,11 @@ class Colaborador extends Model
     public function asignacionesTablets()
     {
         return $this->hasMany(AsignacionTablet::class, 'colaborador_id');
+    }
+    // Agrega este método al modelo
+    public function asignacionesEscritorio()
+    {
+        return $this->hasMany(AsignacionEscritorio::class, 'colaborador_id');
     }
 
 }

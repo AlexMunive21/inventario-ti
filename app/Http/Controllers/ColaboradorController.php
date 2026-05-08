@@ -10,6 +10,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Models\Asignacion;
 use App\Models\AsignacionCelular;
+use App\Models\AsignacionEscritorio;
 
 
 class ColaboradorController extends Controller implements HasMiddleware
@@ -136,6 +137,11 @@ class ColaboradorController extends Controller implements HasMiddleware
             return back()->with('error', 'El colaborador tiene un equipo asignado. Debe liberarlo primero.');
         }
 
+        // Nuevo — verifica escritorio
+        if ($colaborador->asignacionesEscritorio()->where('activa', 1)->exists()) {
+            return back()->with('error', 'El colaborador tiene un equipo de escritorio asignado. Debe liberarlo primero.');
+        }
+
         $colaborador->update([
             'activo'     => 2,
             'fecha_baja' => now(),
@@ -151,17 +157,16 @@ class ColaboradorController extends Controller implements HasMiddleware
             ->orderBy('fecha_baja', 'desc')
             ->get()
             ->map(function ($col) {
-                // Último equipo que tuvo
                 $col->ultimo_equipo = Asignacion::where('colaborador_id', $col->id)
-                    ->with('equipo')
-                    ->latest()
-                    ->first();
+                    ->with('equipo')->latest()->first();
 
-                // Último celular que tuvo
                 $col->ultimo_celular = AsignacionCelular::where('colaborador_id', $col->id)
-                    ->with('celular')
-                    ->latest()
-                    ->first();
+                    ->with('celular')->latest()->first();
+
+                // Nuevo
+                $col->ultimo_escritorio = AsignacionEscritorio::where('colaborador_id', $col->id)
+                    ->with('equipoEscritorio.cpu')
+                    ->latest()->first();
 
                 return $col;
             });

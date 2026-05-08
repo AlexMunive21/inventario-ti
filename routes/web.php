@@ -104,6 +104,10 @@ Route::middleware(['auth', 'permission:ver colaboradores'])->group(function () {
         ->name('colaboradores.reactivar')
         ->middleware('role:GerenteTIDS');
 
+    Route::get('colaboradores/{colaborador}/ficha-rrhh',
+        [ColaboradorController::class, 'fichaRRHH']
+        )->name('colaboradores.ficha_rrhh');
+
     // Después el resource
     Route::resource('colaboradores', ColaboradorController::class)
         ->parameters(['colaboradores' => 'colaborador']);
@@ -111,9 +115,7 @@ Route::middleware(['auth', 'permission:ver colaboradores'])->group(function () {
 Route::resource('usuarios', App\Http\Controllers\UsuarioController::class)
     ->middleware(['auth', 'role:GerenteTIDS|AnalistaTI']);
 
-Route::get('colaboradores/{colaborador}/ficha-rrhh',
-    [ColaboradorController::class, 'fichaRRHH']
-)->name('colaboradores.ficha_rrhh');
+
 
 
 
@@ -252,6 +254,23 @@ Route::middleware(['auth', 'permission:ver todo'])->group(function () {
     Route::get('tablets/{tablet}/pagare', [TabletController::class, 'pagare'])
         ->name('tablets.pagare')
         ->middleware('auth');
+
+    Route::post('asignaciones/{asignacion}/subir-pdf-pagare',
+        [DocumentoAsignacionController::class, 'subirPdfPagareEquipo'])
+        ->name('asignaciones.subirPdfPagare');
+    Route::get('asignaciones/{asignacion}/descargar-pdf-pagare',
+        [DocumentoAsignacionController::class, 'descargarPdfPagareEquipo'])
+        ->name('asignaciones.descargarPdfPagare');
+
+    Route::post('asignaciones-tablets/{asignacion}/subir-pdf-pagare',
+        [DocumentoAsignacionController::class, 'subirPdfPagareTablet'])
+        ->name('asignaciones-tablets.subirPdfPagare');
+    Route::get('asignaciones-tablets/{asignacion}/descargar-pdf-pagare',
+        [DocumentoAsignacionController::class, 'descargarPdfPagareTablet'])
+        ->name('asignaciones-tablets.descargarPdfPagare');
+        Route::get('asignaciones/{asignacion}/ficha-tecnica',
+        [DocumentoAsignacionController::class, 'generarFichaTecnica'])
+        ->name('asignaciones.fichaTecnica');
 
 });
 

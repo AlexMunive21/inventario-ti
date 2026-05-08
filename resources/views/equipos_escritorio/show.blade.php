@@ -148,26 +148,14 @@
 
                     <div class="mt-2">
                         {{-- Documentos --}}
-                        @role('AnalistaTI|AnalistaDS|GerenteTIDS')
+                        <!-- @role('AnalistaTI|AnalistaDS|GerenteTIDS')
                         <div class="btn-group mr-2">
                             <button type="button" class="btn btn-sm btn-info dropdown-toggle"
                                     data-toggle="dropdown">
                                 <i class="fas fa-file-alt"></i> Documentos
                             </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item"
-                                   href="{{ route('asignaciones-escritorio.generar', [$asignacionActiva->id, 'ficha_tecnica']) }}">
-                                    <i class="fas fa-file-word text-success mr-1"></i> Ficha Técnica
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"
-                                   data-toggle="modal" data-target="#modalPdfEscritorio">
-                                    <i class="fas fa-upload text-secondary mr-1"></i>
-                                    {{ $asignacionActiva->pdf_firmado ? 'Reemplazar PDF firmado' : 'Subir PDF firmado' }}
-                                </a>
-                            </div>
                         </div>
-                        @endrole
+                        @endrole -->
 
                         {{-- Liberar --}}
                         <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLiberar">
@@ -191,7 +179,7 @@
 
 </div>
 
-{{-- ✅ Fix 5 — Historial mejorado --}}
+{{-- Fix 5 — Historial mejorado --}}
 <div class="card mt-3">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-history mr-2"></i>Historial de asignaciones</h3>

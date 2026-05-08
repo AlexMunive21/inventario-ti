@@ -71,7 +71,7 @@
                         @endif
                     </td>
                     <td>
-                        {{-- Dropdown de documentos --}}
+                        <!-- {{-- Dropdown de documentos --}}
                         @role('AnalistaTI|AnalistaDS|GerenteTIDS')
                         <div class="btn-group mr-1">
                             <button type="button" class="btn btn-sm btn-info dropdown-toggle"
@@ -88,7 +88,14 @@
                                 </a>
                             </div>
                         </div>
-                        @endrole
+                        @endrole -->
+                        {{-- Ficha técnica — solo laptops y equipos de escritorio --}}
+                        @if(in_array(strtolower($asig->equipo->tipo_equipo ?? ''), ['laptop', 'desktop', 'workstation']))
+                        <a class="dropdown-item"
+                        href="{{ route('asignaciones.fichaTecnica', $asig->id) }}">
+                            <i class="fas fa-file-alt text-success mr-1"></i> Ficha Técnica
+                        </a>
+                        @endif
 
                         {{-- Liberar --}}
                         <button type="button"

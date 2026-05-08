@@ -131,6 +131,35 @@
 
             <br>
 
+                        <!-- <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Nombre en red</label>
+                        <input type="text" name="nombre_equipo" class="form-control"
+                            value="{{ old('nombre_equipo', $equipo->nombre_equipo ?? '') }}"
+                            placeholder="Ej: PC-RECEPCION-01">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Correo asignado</label>
+                        <input type="text" name="correo" class="form-control"
+                            value="{{ old('correo', $equipo->correo ?? '') }}"
+                            placeholder="Ej: usuario@empresa.com">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input type="text" name="estado" class="form-control"
+                            value="{{ old('estado', $equipo->estado ?? '') }}"
+                            placeholder="Ej: Puebla">
+                    </div>
+                </div>
+            </div>
+
+            <br> -->
+
             <div>
                 <label>Observaciones</label>
                 <textarea name="observaciones" 

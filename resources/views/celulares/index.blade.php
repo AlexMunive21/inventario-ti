@@ -61,6 +61,10 @@
                                 @endif
                             </td>
                             <td>
+                                <a href="{{ route('celulares.show', $celular) }}"
+                                    class="btn btn-sm btn-info" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                                 <a href="{{ route('celulares.edit', $celular) }}"
                                    class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit"></i>
